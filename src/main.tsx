@@ -4,7 +4,7 @@ import App from "./App.tsx";
 import "./index.css";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { firebaseConfig } from "./services/firebaseConfig.ts";
+import { firebaseConfig } from "./settings/firebaseConfig.ts";
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
