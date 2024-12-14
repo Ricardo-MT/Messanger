@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import { loginSlice } from "../modules/login/loginSlice";
 import { authSlice } from "../contexts/authSlice";
 import { resetPasswordSlice } from "../modules/resetPassword/resetPasswordSlice";
+import { universeListSlice } from "../modules/home/universeListSlice";
 
 export const store = configureStore({
   reducer: {
     login: loginSlice.reducer,
     auth: authSlice.reducer,
     resetPassword: resetPasswordSlice.reducer,
+    universeList: universeListSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
