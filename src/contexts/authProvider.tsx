@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     } else {
       navigate(ROUTE_NAMES.LOGIN);
     }
-  }, [navigate, userState.loading, userState.user]);
+  }, [userState.loading, userState.user]);
 
   useEffect(() => {
     const unsuscribe = onAuthStateChanged(authApp, (user) => {

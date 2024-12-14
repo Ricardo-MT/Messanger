@@ -1,6 +1,8 @@
+import { Link } from "react-router";
 import { useAppSelector } from "../../store/storeHooks";
 import { loginState } from "./loginSlice";
 import { useLogin } from "./useLogin";
+import { ROUTE_NAMES } from "../../settings/routes";
 
 export const LoginPage = () => {
   return <LoginView />;
@@ -39,6 +41,10 @@ const LoginView = () => {
         </div>
       </form>
       <p>{state.error}</p>
+      <div>
+        <h3>Forgot your password?</h3>
+        <Link to={ROUTE_NAMES.RESET_PASSWORD}>Reset your password</Link>
+      </div>
     </>
   );
 };

@@ -9,7 +9,7 @@ import { Provider } from "react-redux";
 import { store } from "./store/store.ts";
 import { AuthProvider } from "./contexts/authProvider.tsx";
 import { AuthenticatedGuard } from "./routeGuards/AuthenticatedGuard.tsx";
-// import {User} from "firebase/auth";
+import { ResetPasswordPage } from "./modules/resetPassword/page.tsx";
 
 function App() {
   return (
@@ -22,6 +22,10 @@ function App() {
                 <Route index element={<HomePage />} />
               </Route>
               <Route path={ROUTE_NAMES.LOGIN} element={<LoginPage />} />
+              <Route
+                path={ROUTE_NAMES.RESET_PASSWORD}
+                element={<ResetPasswordPage />}
+              />
               <Route path={ROUTE_NAMES.NOT_FOUND} element={<NotFoundPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
