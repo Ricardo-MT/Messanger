@@ -1,11 +1,20 @@
-import { Link } from "react-router";
-import { ROUTE_NAMES } from "../../settings/routes";
+import { authState } from "../../contexts/authSlice";
+import { authApp } from "../../settings/firebaseApp";
+import { useAppSelector } from "../../store/storeHooks";
 
 export const HomePage = () => {
+  const { user } = useAppSelector(authState);
   return (
     <>
       <h1>Messanger</h1>
-      <Link to={ROUTE_NAMES.LOGIN}>Go to Login</Link>
+      <h3>{user?.email}</h3>
+      <button
+        onClick={() => {
+          authApp.signOut();
+        }}
+      >
+        LOG OUT
+      </button>
     </>
   );
 };
