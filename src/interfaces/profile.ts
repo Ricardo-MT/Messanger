@@ -1,3 +1,5 @@
+import { DocumentData } from "firebase/firestore";
+
 export interface Profile {
   id: string;
   alias: string;
@@ -8,3 +10,12 @@ export interface Profile {
   updatedAt: string;
   userId?: string;
 }
+
+export const profileFromDoc = (id: string, data: DocumentData): Profile => {
+  return {
+    ...data,
+    createdAt: data.createdAt.toDate().toLocaleDateString("es-ES"),
+    updatedAt: data.updatedAt.toDate().toLocaleDateString("es-ES"),
+    id,
+  } as Profile;
+};

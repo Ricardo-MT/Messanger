@@ -3,6 +3,7 @@ import { loginSlice } from "../modules/login/loginSlice";
 import { authSlice } from "../contexts/authSlice";
 import { resetPasswordSlice } from "../modules/resetPassword/resetPasswordSlice";
 import { universeListSlice } from "../modules/home/universeListSlice";
+import { universeSlice } from "../modules/universe/universeSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     auth: authSlice.reducer,
     resetPassword: resetPasswordSlice.reducer,
     universeList: universeListSlice.reducer,
+    universe: universeSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

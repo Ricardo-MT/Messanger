@@ -2,10 +2,13 @@ import { useEffect } from "react";
 import { useAppSelector } from "../../store/storeHooks";
 import { universeListState } from "./universeListSlice";
 import { useUniverseList } from "./useUniverseList";
+import { useNavigate } from "react-router";
+import { ROUTE_NAMES } from "../../settings/routes";
 
 export const UniversesList = () => {
   const { universes, loading, error } = useAppSelector(universeListState);
   const { fetchUniverseList } = useUniverseList();
+  const navigate = useNavigate();
   useEffect(() => {
     fetchUniverseList();
   }, [fetchUniverseList]);
@@ -21,7 +24,9 @@ export const UniversesList = () => {
             marginBottom: "10px",
             borderRadius: "5px",
             backgroundColor: "#020202",
+            cursor: "pointer",
           }}
+          onClick={() => navigate(ROUTE_NAMES.APP)}
           key={universe.id}
         >
           <h3>{universe.name}</h3>

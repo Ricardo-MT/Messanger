@@ -1,5 +1,5 @@
 import PWABadge from "./PWABadge.tsx";
-import { BrowserRouter, Routes, Route } from "react-router";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import "./App.css";
 import { ROUTE_NAMES } from "./settings/routes.ts";
 import { HomePage } from "./modules/home/page.tsx";
@@ -10,6 +10,8 @@ import { store } from "./store/store.ts";
 import { AuthProvider } from "./contexts/authProvider.tsx";
 import { AuthenticatedGuard } from "./routeGuards/AuthenticatedGuard.tsx";
 import { ResetPasswordPage } from "./modules/resetPassword/page.tsx";
+import { ProfilePage } from "./modules/universe/profile/page.tsx";
+import { UniverseLayout } from "./modules/universe/layout.tsx";
 
 function App() {
   return (
@@ -20,6 +22,18 @@ function App() {
             <Routes>
               <Route path={ROUTE_NAMES.HOME} element={<AuthenticatedGuard />}>
                 <Route index element={<HomePage />} />
+                <Route path={ROUTE_NAMES.APP} element={<UniverseLayout />}>
+                  <Route
+                    index
+                    element={<Navigate to={ROUTE_NAMES.PROFILE} />}
+                  />
+                  <Route path={ROUTE_NAMES.PROFILE} element={<ProfilePage />} />
+                  <Route path={ROUTE_NAMES.CHAT} element={<div>Chat</div>} />
+                  <Route
+                    path={ROUTE_NAMES.SETTINGS}
+                    element={<div>Settings</div>}
+                  />
+                </Route>
               </Route>
               <Route path={ROUTE_NAMES.LOGIN} element={<LoginPage />} />
               <Route
