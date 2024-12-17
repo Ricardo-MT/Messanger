@@ -17,8 +17,12 @@ export const ChatPage = () => {
           onSelectChat={selectChat}
         />
       </div>
-      <div className={css.chatContent}>
-        <ChatComponent chat={chat} messages={messages[chat?.id ?? ""] ?? []} />
+      <div className={`${css.chatContent} ${chat ? css.chatActive : ""}`}>
+        <ChatComponent
+          chat={chat}
+          messages={messages[chat?.id ?? ""] ?? []}
+          onGoBack={() => selectChat(null)}
+        />
       </div>
     </div>
   );

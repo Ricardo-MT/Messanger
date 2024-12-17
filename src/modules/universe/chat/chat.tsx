@@ -8,9 +8,10 @@ import { useChatCompose } from "./useChatCompose";
 type Props = {
   chat?: Chat | null;
   messages: Message[];
+  onGoBack: () => void;
 };
 
-export const ChatComponent = ({ chat, messages }: Props) => {
+export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
   const { profile } = useAppSelector(universeState);
   const { text, setText, submit } = useChatCompose();
   if (!chat) {
@@ -20,6 +21,9 @@ export const ChatComponent = ({ chat, messages }: Props) => {
   return (
     <>
       <div className={css.chatHeader}>
+        <span className={css.chatGoBack} onClick={() => onGoBack()}>
+          Back
+        </span>{" "}
         {chat.name} - {chat.updatedAt.toUTCString()}
       </div>
       <div className={css.chatBody}>

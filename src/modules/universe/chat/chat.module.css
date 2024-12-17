@@ -41,6 +41,7 @@
   flex-direction: column;
   gap: .5rem;
   flex: 1;
+  background-color: #6f6f6f;
 }
 
 .chatHeader {
@@ -90,4 +91,32 @@
 .message.otherMessage {
   align-self: flex-start;
   background-color: #f8f9fa33;
+}
+
+.chatGoBack {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .chatGoBack {
+    display: inline-block;
+  }
+  .chatList {
+    width: 100%;
+    max-width: unset;
+  }
+  .chatContent {
+    transition: all .3s;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    opacity: 0.5;
+    transform: translateX(100vw);
+  }
+  .chatContent.chatActive {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }

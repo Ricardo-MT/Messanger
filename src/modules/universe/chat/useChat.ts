@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../store/storeHooks";
 import { universeState } from "../universeSlice";
-import { chatSlice, chatState } from "./chatSlice";
+import { chatSlice } from "./chatSlice";
 import { FirebaseError } from "firebase/app";
 import {
   doc,
@@ -22,7 +22,6 @@ const {
   appendChats,
   updateChats,
   removeChats,
-  setChat,
   updateMessages,
   attachMessages,
   reset,
@@ -34,13 +33,13 @@ const {
 export const useChat = () => {
   const { profile, universe } = useAppSelector(universeState);
   const dispatch = useAppDispatch();
-  const { chats, chat } = useAppSelector(chatState);
+  // const { chats, chat } = useAppSelector(chatState);
 
-  useEffect(() => {
-    if (!chat && chats.length) {
-      dispatch(setChat(chats[0]));
-    }
-  }, [chats, chat]);
+  // useEffect(() => {
+  //   if (!chat && chats.length) {
+  //     dispatch(setChat(chats[0]));
+  //   }
+  // }, [chats, chat]);
 
   const listenToChats = useCallback(
     async (chat: Chat, latestTimestamp: Date) => {

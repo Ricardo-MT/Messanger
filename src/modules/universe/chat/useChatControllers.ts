@@ -9,7 +9,11 @@ export const useChatControllers = () => {
   const { chats } = useAppSelector(chatState);
 
   const selectChat = useCallback(
-    (chatId: string) => {
+    (chatId?: string | null) => {
+      if (!chatId) {
+        dispatch(setChat(null));
+        return;
+      }
       const chat = chats.find((chat) => chat.id === chatId);
       if (!chat) {
         return;
