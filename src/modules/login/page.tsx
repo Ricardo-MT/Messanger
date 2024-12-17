@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import { useAppSelector } from "../../store/storeHooks";
 import { loginState } from "./loginSlice";
-import { useLogin } from "./useLogin";
+import { useLogin } from "./useLogin.ts";
 import { ROUTE_NAMES } from "../../settings/routes";
 
 export const LoginPage = () => {
@@ -26,6 +26,7 @@ const LoginView = () => {
             value={state.email}
             onChange={(e) => onEmailChange(e.target.value)}
             placeholder="Email"
+            autoComplete="email"
           />
         </div>
         <div>
@@ -34,6 +35,7 @@ const LoginView = () => {
             value={state.password}
             onChange={(e) => onPasswordChange(e.target.value)}
             placeholder="Password"
+            autoComplete="current-password"
           />
         </div>
         <div>

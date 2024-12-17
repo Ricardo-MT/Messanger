@@ -28,6 +28,7 @@ export const useResetPassword = () => {
             dispatch(success());
           })
           .catch((e) => {
+            console.error(e);
             let message = "An error occurred";
             switch (true) {
               case e instanceof FirebaseError:

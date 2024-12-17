@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { Universe, universeFromDoc } from "../../interfaces/universe";
-import { db } from "../../settings/collections";
+import { collections, db } from "../../settings/collections";
 import { useAppDispatch, useAppSelector } from "../../store/storeHooks";
 import { universeSlice, universeState } from "./universeSlice";
 import {
@@ -21,7 +21,9 @@ const { startLoading, setUniverses, setUniverse, setProfile, setError } =
 
 export const useUniverse = () => {
   const { user } = useAppSelector(authState);
-  const { universe, universes } = useAppSelector(universeState);
+  const { universe, universes, universesLoaded } =
+    useAppSelector(universeState);
+
   const dispatch = useAppDispatch();
   const fetchUniverseList = useCallback(async () => {
     try {
@@ -29,7 +31,7 @@ export const useUniverse = () => {
         return;
       }
       dispatch(startLoading());
-      const userRef = doc(firestoreDb, "user", user!.uid);
+      const userRef = doc(firestoreDb, collections.USER, user!.uid);
       const q = query(db.profile, where("userId", "==", userRef));
 
       const profilesSnapshot = await getDocs(q);
@@ -51,15 +53,21 @@ export const useUniverse = () => {
       dispatch(setUniverses(universes));
       dispatch(setUniverse(universes[0]));
     } catch (error) {
+      console.error(error);
       dispatch(setError((error as FirebaseError).message));
     }
-  }, [dispatch, user]);
+  }, [user, universesLoaded]);
 
   const fetchProfileByUniverse = useCallback(
-    async (universeId: string) => {
+    async (universeId: string, userId: string) => {
       try {
-        const universeRef = doc(firestoreDb, "universe", universeId);
-        const q = query(db.profile, where("universeId", "==", universeRef));
+        const universeRef = doc(firestoreDb, collections.UNIVERSE, universeId);
+        const userRef = doc(firestoreDb, collections.USER, userId);
+        const q = query(
+          db.profile,
+          where("universeId", "==", universeRef),
+          where("userId", "==", userRef)
+        );
         const profileSnapshot = await getDocs(q);
         if (profileSnapshot.empty) {
           dispatch(setProfile(null));
@@ -69,10 +77,11 @@ export const useUniverse = () => {
         const profile = profileFromDoc(document.id, document.data());
         dispatch(setProfile(profile));
       } catch (error) {
+        console.error(error);
         dispatch(setError((error as FirebaseError).message));
       }
     },
-    [dispatch]
+    []
   );
 
   const selectUniverse = useCallback(
@@ -87,12 +96,12 @@ export const useUniverse = () => {
   );
 
   useEffect(() => {
-    if (universe) {
-      fetchProfileByUniverse(universe.id);
+    if (universe && user) {
+      fetchProfileByUniverse(universe.id, user!.uid);
     } else {
       dispatch(setProfile(null));
     }
-  }, [universe, fetchProfileByUniverse, dispatch]);
+  }, [universe?.id, user?.uid]);
 
   useEffect(() => {
     fetchUniverseList();

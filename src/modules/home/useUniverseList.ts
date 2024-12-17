@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Universe, universeFromDoc } from "../../interfaces/universe";
-import { db } from "../../settings/collections";
+import { collections, db } from "../../settings/collections";
 import { useAppDispatch, useAppSelector } from "../../store/storeHooks";
 import { universeListSlice } from "./universeListSlice";
 import {
@@ -29,7 +29,7 @@ export const useUniverseList = () => {
             return;
           }
           dispatch(fetchUniverseList());
-          const userRef = doc(firestoreDb, "user", user!.uid);
+          const userRef = doc(firestoreDb, collections.USER, user!.uid);
           const q = query(db.profile, where("userId", "==", userRef));
 
           const profilesSnapshot = await getDocs(q);
@@ -50,6 +50,7 @@ export const useUniverseList = () => {
           });
           dispatch(fetchUniverseListSuccess(universes));
         } catch (error) {
+          console.error(error);
           dispatch(fetchUniverseListError((error as FirebaseError).message));
         }
       },

@@ -12,6 +12,7 @@ import { AuthenticatedGuard } from "./routeGuards/AuthenticatedGuard.tsx";
 import { ResetPasswordPage } from "./modules/resetPassword/page.tsx";
 import { ProfilePage } from "./modules/universe/profile/page.tsx";
 import { UniverseLayout } from "./modules/universe/layout.tsx";
+import { ChatPage } from "./modules/universe/chat/page.tsx";
 
 function App() {
   return (
@@ -23,16 +24,9 @@ function App() {
               <Route path={ROUTE_NAMES.HOME} element={<AuthenticatedGuard />}>
                 <Route index element={<HomePage />} />
                 <Route path={ROUTE_NAMES.APP} element={<UniverseLayout />}>
-                  <Route
-                    index
-                    element={<Navigate to={ROUTE_NAMES.PROFILE} />}
-                  />
+                  <Route index element={<Navigate to={ROUTE_NAMES.CHAT} />} />
                   <Route path={ROUTE_NAMES.PROFILE} element={<ProfilePage />} />
-                  <Route path={ROUTE_NAMES.CHAT} element={<div>Chat</div>} />
-                  <Route
-                    path={ROUTE_NAMES.SETTINGS}
-                    element={<div>Settings</div>}
-                  />
+                  <Route path={ROUTE_NAMES.CHAT} element={<ChatPage />} />
                 </Route>
               </Route>
               <Route path={ROUTE_NAMES.LOGIN} element={<LoginPage />} />

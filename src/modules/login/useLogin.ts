@@ -29,10 +29,9 @@ export const useLogin = () => {
         event.preventDefault();
         dispatch(submit());
         signInWithEmailAndPassword(authApp, email, password)
-          .then(() => {
-            console.log("Success");
-          })
+          .then(() => {})
           .catch((e) => {
+            console.error(e);
             let message = "An error occurred";
             switch (true) {
               case e instanceof FirebaseError:
