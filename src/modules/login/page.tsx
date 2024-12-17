@@ -22,7 +22,7 @@ const LoginView = () => {
       >
         <div>
           <input
-            type="text"
+            type="email"
             value={state.email}
             onChange={(e) => onEmailChange(e.target.value)}
             placeholder="Email"

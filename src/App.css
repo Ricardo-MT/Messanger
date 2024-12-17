@@ -1,8 +1,9 @@
 #root {
-  margin: 0 auto;
   overflow: hidden;
   text-align: center;
-  height: 100%;
+  height: calc(100% - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  width: 100%;
 }
 
 .logo {

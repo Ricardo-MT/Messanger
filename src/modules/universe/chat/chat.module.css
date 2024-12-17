@@ -108,8 +108,8 @@
   .chatContent {
     transition: all .3s;
     position: absolute;
-    top: 0;
-    bottom: 0;
+    top: env(safe-area-inset-top);
+    height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     right: 0;
     left: 0;
     opacity: 0.5;

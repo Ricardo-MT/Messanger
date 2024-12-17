@@ -14,7 +14,10 @@
 }
 
 html {
-  min-height: calc(100% + env(safe-area-inset-top));
+  height: calc(100vh);
+  /* height: calc(100% + env(safe-area-inset-top)); */
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 a {
@@ -30,8 +33,11 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
+  height: 100%;
   min-height: 100%;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  max-height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 h1 {
