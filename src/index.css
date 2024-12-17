@@ -13,6 +13,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+html {
+  min-height: calc(100% + env(safe-area-inset-top));
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -26,8 +30,8 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  min-height: 100%;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 h1 {
