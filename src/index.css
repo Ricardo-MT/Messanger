@@ -14,8 +14,8 @@
 }
 
 html {
-  height: calc(100vh);
-  /* height: calc(100% + env(safe-area-inset-top)); */
+  /* height: calc(100%); */
+  height: calc(100%);
   overflow: hidden;
   overscroll-behavior: none;
 }
