@@ -1,11 +1,11 @@
 import { FirebaseError } from "firebase/app";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { doc, addDoc, Timestamp } from "firebase/firestore";
-import { useAppSelector } from "../../../store/storeHooks";
-import { universeState } from "../universeSlice";
-import { collections, db } from "../../../settings/collections";
-import { firestoreDb } from "../../../settings/firebaseApp";
-import { chatState } from "./chatSlice";
+import { useAppSelector } from "../../../../store/storeHooks";
+import { universeState } from "../../universeSlice";
+import { collections, db } from "../../../../settings/collections";
+import { firestoreDb } from "../../../../settings/firebaseApp";
+import { chatState } from "../chatSlice";
 
 export const useChatCompose = () => {
   const { profile } = useAppSelector(universeState);

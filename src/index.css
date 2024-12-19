@@ -11,6 +11,13 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --background: #0c1317;
+  --background-accent: #202c33;
+  --background-accent-secondary: #36454d;
+  --primary: #005c4b;
+  --message-mine: var(--primary);
+  --message-other: #202c33;
 }
 
 html {
@@ -68,6 +75,8 @@ button:focus-visible {
   :root {
     color: #213547;
     background-color: #ffffff;
+    --background: #f9f9f9;
+    --background-accent: #f0f0f0;
   }
   a:hover {
     color: #747bff;
@@ -75,4 +84,55 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+#root {
+  background-color: var(--background);
+}
+
+.chatListItem {
+  border-bottom: 1px solid var(--background-accent);
+}
+
+.chatHeader {
+  background-color: var(--background-accent);
+}
+
+.chatInputContainer {
+  background-color: var(--background-accent);
+}
+
+.chatInputContainer textarea {
+  background-color: var(--background-accent-secondary);
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  padding: 0.5em 1em;
+  font-size: 14px;
+  max-height: 96px;
+  line-height: 1.2;
+  overflow-y: auto;
+  resize: none;
+  transition: height 0.2s ease;
+}
+
+.chatContent {
+  background-color: var(--background);
+  background-image: url(/chat-background.png);
+  background-position: top left;
+}
+
+.message.myMessage {
+  background-color: var(--message-mine);
+}
+
+.message.otherMessage {
+  background-color: var(--message-other);
+}
+
+.message .timestamp,
+.chatListItem .timestamp {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: .8rem;
+  align-self: flex-end;
 }

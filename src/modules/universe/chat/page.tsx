@@ -1,13 +1,26 @@
 import { useAppSelector } from "../../../store/storeHooks";
-import { ChatComponent } from "./chat";
+import { ChatComponent } from "./chatComponent/ChatComponent";
 import css from "./chat.module.css";
-import { ChatList } from "./chatList";
+import { ChatList } from "./chatList/ChatList";
 import { chatState } from "./chatSlice";
+import { useEffect, useRef } from "react";
 import { useChatControllers } from "./useChatControllers";
 
 export const ChatPage = () => {
   const { chats, chat, messages } = useAppSelector(chatState);
   const { selectChat } = useChatControllers();
+  const chatComponentRef = useRef<HTMLDivElement>(null);
+  const onGoBack = () => {
+    chatComponentRef.current?.classList.remove(css.chatActive);
+    setTimeout(() => {
+      selectChat(null);
+    }, 300);
+  };
+  useEffect(() => {
+    if (chat) {
+      chatComponentRef.current?.classList.add(css.chatActive);
+    }
+  }, [chat]);
   return (
     <div className={css.container}>
       <div className={css.chatList}>
@@ -17,11 +30,11 @@ export const ChatPage = () => {
           onSelectChat={selectChat}
         />
       </div>
-      <div className={`${css.chatContent} ${chat ? css.chatActive : ""}`}>
+      <div ref={chatComponentRef} className={`chatContent ${css.chatContent}`}>
         <ChatComponent
           chat={chat}
           messages={messages[chat?.id ?? ""] ?? []}
-          onGoBack={() => selectChat(null)}
+          onGoBack={onGoBack}
         />
       </div>
     </div>

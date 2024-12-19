@@ -85,39 +85,36 @@ export const useChat = () => {
     [dispatch]
   );
 
-  const fetchLastMessagesFromChats = useCallback(
-    async (chats: Chat[]) => {
-      try {
-        await Promise.all(
-          chats.map(async (chat) => {
-            const chatRef = doc(firestoreDb, collections.CHAT, chat.id);
-            const q = query(
-              db.message,
-              where("chatId", "==", chatRef),
-              orderBy("timestamp", "desc"),
-              limit(30)
-            );
-            const docs = await getDocs(q);
-            const messages = await Promise.all(
-              docs.docs.map((doc) => messageFromDoc(doc.id, doc.data()))
-            );
-            dispatch(
-              attachMessages({
-                chatId: chat.id,
-                messages,
-              })
-            );
-            const lastTimestamp = messages[0].timestamp;
-            listenToChats(chat, lastTimestamp);
-          })
-        );
-      } catch (error) {
-        console.error(error);
-        dispatch(setError((error as FirebaseError).message));
-      }
-    },
-    [dispatch]
-  );
+  const fetchLastMessagesFromChats = useCallback(async (chats: Chat[]) => {
+    try {
+      await Promise.all(
+        chats.map(async (chat) => {
+          const chatRef = doc(firestoreDb, collections.CHAT, chat.id);
+          const q = query(
+            db.message,
+            where("chatId", "==", chatRef),
+            orderBy("timestamp", "desc"),
+            limit(30)
+          );
+          const docs = await getDocs(q);
+          const messages = await Promise.all(
+            docs.docs.map((doc) => messageFromDoc(doc.id, doc.data()))
+          );
+          dispatch(
+            attachMessages({
+              chatId: chat.id,
+              messages,
+            })
+          );
+          const lastTimestamp = messages[0].timestamp;
+          listenToChats(chat, lastTimestamp);
+        })
+      );
+    } catch (error) {
+      console.error(error);
+      dispatch(setError((error as FirebaseError).message));
+    }
+  }, []);
 
   const fetchChatsByProfile = useCallback(
     async (profileId: string, universeId: string) => {
@@ -131,16 +128,20 @@ export const useChat = () => {
           where("members", "array-contains", profileRef),
           orderBy("updatedAt", "desc")
         );
-        const suscriberToChats = onSnapshot(q, (snapshot) => {
+        const suscriberToChats = onSnapshot(q, async (snapshot) => {
           const addedChats: Chat[] = [];
           const modifiedChats: Chat[] = [];
           const removedChats: string[] = [];
           for (const change of snapshot.docChanges()) {
             if (change.type === "added") {
-              addedChats.push(chatFromDoc(change.doc.id, change.doc.data()));
+              addedChats.push(
+                await chatFromDoc(change.doc.id, change.doc.data())
+              );
             }
             if (change.type === "modified") {
-              modifiedChats.push(chatFromDoc(change.doc.id, change.doc.data()));
+              modifiedChats.push(
+                await chatFromDoc(change.doc.id, change.doc.data())
+              );
             }
             if (change.type === "removed") {
               removedChats.push(change.doc.id);
@@ -166,7 +167,7 @@ export const useChat = () => {
         dispatch(setError((error as FirebaseError).message));
       }
     },
-    [dispatch]
+    []
   );
 
   useEffect(() => {

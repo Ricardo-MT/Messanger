@@ -14,7 +14,6 @@
     justify-content: start;
     padding: .5em;
     width: 3.5em;
-    border-right: 1px solid #e9ecef;
     gap: .5rem;
 }
 
@@ -34,8 +33,6 @@
     .nav {
         flex-direction: row;
         width: 100%;
-        border-right: none;
-        border-top: 1px solid #e9ecef;
     }
     .nav > * {
         flex: 1;
