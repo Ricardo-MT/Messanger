@@ -95,11 +95,21 @@
   flex-direction: row;
   align-items: flex-end;
   gap: .5rem;
-  padding: .5rem 1rem;
+  padding: .5rem .5rem;
 }
 
 .chatInputContainer > textarea {
   flex: 1;
+}
+
+.chatSubmitButtonContainer {
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .message {
@@ -108,7 +118,6 @@
   width: fit-content;
   max-width: 80%;
   text-align: left;
-  overflow: clip;
   animation: panIn .5s ease;
   display: flex;
   flex-direction: column;
@@ -164,7 +173,6 @@
     transition: all .25s ease-in-out;
     position: absolute;
     top: env(safe-area-inset-top);
-    /* height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)); */
     bottom: env(safe-area-inset-bottom);
     right: 0;
     left: 0;

@@ -14,14 +14,13 @@
 
   --background: #0c1317;
   --background-accent: #202c33;
-  --background-accent-secondary: #36454d;
+  --background-accent-secondary: #3d4b54;
   --primary: #005c4b;
   --message-mine: var(--primary);
   --message-other: #202c33;
 }
 
 html {
-  /* height: calc(100%); */
   height: calc(100%);
   overflow: hidden;
   overscroll-behavior: none;
@@ -29,11 +28,12 @@ html {
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--background-accent-secondary);
   text-decoration: inherit;
+  transition: color 0.25s;
 }
-a:hover {
-  color: #535bf2;
+a:hover, a.active {
+  color: var(--primary);
 }
 
 body {
@@ -74,12 +74,11 @@ button:focus-visible {
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
-    --background: #f9f9f9;
+    background-color: #cccccc;
+    --background: #f1eddc;
     --background-accent: #f0f0f0;
-  }
-  a:hover {
-    color: #747bff;
+    --background-accent-secondary: #c9c9c9;
+    --message-other: #e4e4e4;
   }
   button {
     background-color: #f9f9f9;
@@ -91,7 +90,7 @@ button:focus-visible {
 }
 
 .chatListItem {
-  border-bottom: 1px solid var(--background-accent);
+  border-bottom: 1px solid var(--background-accent-secondary);
 }
 
 .chatHeader {
@@ -116,6 +115,14 @@ button:focus-visible {
   transition: height 0.2s ease;
 }
 
+.chatSubmitButtonContainer {
+  background-color: var(--primary);
+}
+
+.chatSubmitButton {
+  color: #d5d5d5;
+}
+
 .chatContent {
   background-color: var(--background);
   background-image: url(/chat-background.png);
@@ -132,7 +139,7 @@ button:focus-visible {
 
 .message .timestamp,
 .chatListItem .timestamp {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--background-accent-secondary);
   font-size: .8rem;
   align-self: flex-end;
 }
