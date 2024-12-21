@@ -12,12 +12,24 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --background: #0c1317;
+  --background: #131b20;
+  --on-background: #f1f1f1;
   --background-accent: #202c33;
+  --on-background-accent: #f1f1f1;
   --background-accent-secondary: #3d4b54;
-  --primary: #005c4b;
+  --primary: #0a7b66;
+  --nav-item-active: var(--primary);
+  --nav-item-inactive: #546169;
+  --divider: #3d4b54;
+  --timestamp-on-chat-list-item: #637077;
   --message-mine: var(--primary);
+  --timestamp-on-message-mine: #b9b9b9;
   --message-other: #202c33;
+  --timestamp-on-message-other: #697379;
+  --header-and-footer-background: #1d2a31;
+  --on-header-and-footer-background: #f1f1f1;
+  --textinput-background: #3d4b54;
+  --chat-content-background-image: url(/chat-background-dark.png);
 }
 
 html {
@@ -28,7 +40,7 @@ html {
 
 a {
   font-weight: 500;
-  color: var(--background-accent-secondary);
+  color: var(--nav-item-inactive);
   text-decoration: inherit;
   transition: color 0.25s;
 }
@@ -75,10 +87,23 @@ button:focus-visible {
   :root {
     color: #213547;
     background-color: #cccccc;
-    --background: #f1eddc;
+    --background: #f3f1e4;
+    --on-background: #213547;
     --background-accent: #f0f0f0;
+    --on-background-accent: #213547;
     --background-accent-secondary: #c9c9c9;
-    --message-other: #e4e4e4;
+    --nav-item-active: #213547;
+    --nav-item-inactive: #a1a1a1;
+    --divider: #c9c9c9;
+    --timestamp-on-chat-list-item: #8b8b8b;
+    --message-mine: var(--primary);
+    --timestamp-on-message-mine: #c9c9c9;
+    --message-other: #d9d9d9;
+    --timestamp-on-message-other: #7c7b7b;
+    --header-and-footer-background: #f0f0f0;
+    --on-header-and-footer-background: #213547;
+    --textinput-background: #c9c9c9;
+    --chat-content-background-image: url(/chat-background-light.png);
   }
   button {
     background-color: #f9f9f9;
@@ -90,19 +115,19 @@ button:focus-visible {
 }
 
 .chatListItem {
-  border-bottom: 1px solid var(--background-accent-secondary);
+  border-bottom: 1px solid var(--divider);
 }
 
 .chatHeader {
-  background-color: var(--background-accent);
+  background-color: var(--header-and-footer-background);
 }
 
 .chatInputContainer {
-  background-color: var(--background-accent);
+  background-color: var(--header-and-footer-background);
 }
 
 .chatInputContainer textarea {
-  background-color: var(--background-accent-secondary);
+  background-color: var(--textinput-background);
   border-radius: 8px;
   border: none;
   outline: none;
@@ -120,12 +145,12 @@ button:focus-visible {
 }
 
 .chatSubmitButton {
-  color: #d5d5d5;
+  color: whitesmoke;
 }
 
 .chatContent {
   background-color: var(--background);
-  background-image: url(/chat-background.png);
+  background-image: var(--chat-content-background-image);
   background-position: top left;
 }
 
@@ -137,9 +162,18 @@ button:focus-visible {
   background-color: var(--message-other);
 }
 
-.message .timestamp,
+/* .message .timestamp, */
+
 .chatListItem .timestamp {
-  color: var(--background-accent-secondary);
+  color: var(--timestamp-on-chat-list-item);
   font-size: .8rem;
   align-self: flex-end;
+}
+
+.message.myMessage .timestamp {
+  color: var(--timestamp-on-message-mine);
+}
+
+.message.otherMessage .timestamp {
+  color: var(--timestamp-on-message-other);
 }
