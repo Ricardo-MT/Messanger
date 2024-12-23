@@ -1,4 +1,4 @@
-import { DocumentData, getDoc } from "firebase/firestore";
+import { DocumentData } from "firebase/firestore";
 
 export interface Message {
   id: string;
@@ -9,19 +9,12 @@ export interface Message {
   senderId: string;
 }
 
-export const messageFromDoc = async (
-  id: string,
-  data: DocumentData
-): Promise<Message> => {
-  const [chatRef, profileRef] = await Promise.all([
-    getDoc(data.chatId),
-    getDoc(data.senderId),
-  ]);
+export const messageFromDoc = (id: string, data: DocumentData): Message => {
   return {
     ...data,
     timestamp: data.timestamp.toDate(),
-    senderId: profileRef.id,
-    chatId: chatRef.id,
+    senderId: data.senderId.id,
+    chatId: data.chatId.id,
     id,
   } as Message;
 };

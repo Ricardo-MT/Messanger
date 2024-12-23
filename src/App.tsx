@@ -1,6 +1,5 @@
 import PWABadge from "./PWABadge.tsx";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
-import "./App.css";
 import { ROUTE_NAMES } from "./settings/routes.ts";
 // import { HomePage } from "./modules/home/page.tsx";
 import { LoginPage } from "./modules/login/page.tsx";

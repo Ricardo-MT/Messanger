@@ -26,7 +26,8 @@
   --timestamp-on-message-mine: #b9b9b9;
   --message-other: #202c33;
   --timestamp-on-message-other: #697379;
-  --header-and-footer-background: #1d2a31;
+  /* --header-and-footer-background: #1d2a31; */
+  --header-and-footer-background: var(--background);
   --on-header-and-footer-background: #f1f1f1;
   --textinput-background: #3d4b54;
   --chat-content-background-image: url(/chat-background-dark.png);
@@ -36,6 +37,10 @@ html {
   height: calc(100%);
   overflow: hidden;
   overscroll-behavior: none;
+}
+
+html:has(body.ios) {
+  transition: height 0.2s;
 }
 
 a {
@@ -57,6 +62,15 @@ body {
   max-height: 100%;
   overflow: hidden;
   overscroll-behavior: none;
+}
+
+#root {
+  overflow: hidden;
+  text-align: center;
+  /* height: calc(100% - env(safe-area-inset-top) - env(safe-area-inset-bottom)); */
+  /* padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); */
+  height: 100%;
+  width: 100%;
 }
 
 h1 {
@@ -100,7 +114,8 @@ button:focus-visible {
     --timestamp-on-message-mine: #c9c9c9;
     --message-other: #d9d9d9;
     --timestamp-on-message-other: #7c7b7b;
-    --header-and-footer-background: #f0f0f0;
+    /* --header-and-footer-background: #f0f0f0; */
+    --header-and-footer-background: var(--background);
     --on-header-and-footer-background: #213547;
     --textinput-background: #c9c9c9;
     --chat-content-background-image: url(/chat-background-light.png);
@@ -161,8 +176,6 @@ button:focus-visible {
 .message.otherMessage {
   background-color: var(--message-other);
 }
-
-/* .message .timestamp, */
 
 .chatListItem .timestamp {
   color: var(--timestamp-on-chat-list-item);

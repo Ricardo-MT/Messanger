@@ -4,7 +4,6 @@
   align-items: stretch;
   justify-content: start;
   height: 100%;
-  width: 100%;
 }
 
 .container > * {
@@ -159,11 +158,16 @@
 }
 
 @media screen and (max-width: 768px) {
+  .container {
+    width: fit-content;
+  }
+  .container > * {
+    width: calc(100vw - 1rem);
+  }
   .chatGoBack {
     display: inline-block;
   }
   .chatList {
-    width: 100%;
     max-width: unset;
   }
   .chatList > .selectedChat {
@@ -171,14 +175,10 @@
   }
   .chatContent {
     transition: all .25s ease-in-out;
-    position: absolute;
-    top: env(safe-area-inset-top);
-    bottom: env(safe-area-inset-bottom);
-    right: 0;
-    left: 0;
-    transform: translateX(100vw);
+    transform: translateX(0);
+    width: 100vw;
   }
   .chatContent.chatActive {
-    transform: translateX(0);
+    transform: translateX(-100vw);
   }
 }

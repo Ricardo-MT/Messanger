@@ -1,17 +1,17 @@
 const setupDevice = () => {
   const userAgent = window.navigator.userAgent;
   const device: Record<string, boolean> = {
-    Mobile:
+    mobile:
       /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         userAgent
       ),
-    Tablet: /iPad/i.test(userAgent),
-    Desktop:
+    tablet: /iPad/i.test(userAgent),
+    desktop:
       !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         userAgent
       ),
-    Android: /Android/i.test(userAgent),
-    iOS: /iPhone|iPad|iPod/i.test(userAgent),
+    android: /Android/i.test(userAgent),
+    ios: /iPhone|iPad|iPod/i.test(userAgent),
   };
   Object.keys(device).forEach((key) => {
     if (device[key]) {

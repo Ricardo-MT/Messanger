@@ -51,21 +51,19 @@ export const useChat = () => {
           where("timestamp", ">", latestTimestamp),
           orderBy("timestamp", "desc")
         );
-        return onSnapshot(q, async (snapshot) => {
+        return onSnapshot(q, (snapshot) => {
           const add: Message[] = [];
           const remove: string[] = [];
           const modify: Message[] = [];
           for (const change of snapshot.docChanges()) {
             if (change.type === "added") {
-              add.push(await messageFromDoc(change.doc.id, change.doc.data()));
+              add.push(messageFromDoc(change.doc.id, change.doc.data()));
             }
             if (change.type === "removed") {
               remove.push(change.doc.id);
             }
             if (change.type === "modified") {
-              modify.push(
-                await messageFromDoc(change.doc.id, change.doc.data())
-              );
+              modify.push(messageFromDoc(change.doc.id, change.doc.data()));
             }
           }
           dispatch(

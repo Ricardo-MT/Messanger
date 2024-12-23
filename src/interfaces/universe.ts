@@ -7,6 +7,7 @@ export interface Universe {
   createdAt: string;
   name: string;
   updatedAt: string;
+  managers: string[];
 }
 
 export const universeFromDoc = (id: string, data: DocumentData): Universe => {
@@ -14,6 +15,7 @@ export const universeFromDoc = (id: string, data: DocumentData): Universe => {
     ...data,
     createdAt: data.createdAt.toDate().toLocaleDateString("es-ES"),
     updatedAt: data.updatedAt.toDate().toLocaleDateString("es-ES"),
+    managers: Array.from(data.managers?.map((d: { id: string }) => d.id) || []),
     id,
   } as Universe;
 };
