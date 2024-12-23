@@ -23,5 +23,5 @@ function viewportHandler(event: Event) {
   window.scroll(0, 0);
 }
 
-window.visualViewport.addEventListener("scroll", viewportHandler);
-window.visualViewport.addEventListener("resize", viewportHandler);
+window.visualViewport?.addEventListener("scroll", viewportHandler);
+window.visualViewport?.addEventListener("resize", viewportHandler);
