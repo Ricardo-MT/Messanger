@@ -6,5 +6,7 @@ export const ROUTE_NAMES = {
   CHAT: "/app/chat",
   PROFILE: "/app/profile",
   SETTINGS: "/app/settings",
+  MANAGE: "/manage",
+  MANAGE_PROFILES: "/manage/profiles",
   NOT_FOUND: "/404",
 };

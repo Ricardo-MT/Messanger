@@ -5,10 +5,16 @@ import { useAppDispatch, useAppSelector } from "../store/storeHooks";
 import { authSlice, authState } from "./authSlice";
 import { useNavigate } from "react-router";
 import { ROUTE_NAMES } from "../settings/routes";
+import { PreferencesService } from "../services/preferences";
 
 const { setUser, clearUser } = authSlice.actions;
 
-export const AuthProvider = ({ children }: PropsWithChildren) => {
+export const AuthProvider = ({
+  children,
+  preferencesService,
+}: PropsWithChildren & {
+  preferencesService: PreferencesService;
+}) => {
   const dispatch = useAppDispatch();
   const userState = useAppSelector(authState);
   const navigate = useNavigate();
@@ -16,7 +22,18 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     if (userState.loading) return;
     if (userState.user) {
-      navigate(ROUTE_NAMES.HOME);
+      const lastModule = preferencesService.getLastModuleVisited();
+      switch (lastModule) {
+        case "app":
+          navigate(ROUTE_NAMES.APP);
+          break;
+        case "manage":
+          navigate(ROUTE_NAMES.MANAGE);
+          break;
+        default:
+          navigate(ROUTE_NAMES.HOME);
+          break;
+      }
     } else {
       navigate(ROUTE_NAMES.LOGIN);
     }
