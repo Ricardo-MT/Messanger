@@ -6,6 +6,7 @@ import { universeListSlice } from "../modules/home/universeListSlice";
 import { universeSlice } from "../modules/universe/universeSlice";
 import { chatSlice } from "../modules/universe/chat/chatSlice";
 import { manageClientSlice } from "../modules/manage/manageClientSlice";
+import { manageProfilesSlice } from "../modules/manage/manageProfiles/manageProfilesSlice";
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     universe: universeSlice.reducer,
     chat: chatSlice.reducer,
     manageClient: manageClientSlice.reducer,
+    manageProfiles: manageProfilesSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -5,12 +5,14 @@ import { servicesCollection } from "../../services/servicesCollection";
 import { ROUTE_NAMES } from "../../settings/routes";
 import { useAppSelector } from "../../store/storeHooks";
 import { manageClientState } from "./manageClientSlice";
+import { useManageProfiles } from "./manageProfiles/useManageProfile";
 
 export const ManageLayout = () => {
   useEffect(() => {
     servicesCollection.preferences.setLastModuleVisited("manage");
   }, []);
   useManage();
+  useManageProfiles();
   const { error, loading, universes, universe } =
     useAppSelector(manageClientState);
   return (
@@ -24,7 +26,7 @@ export const ManageLayout = () => {
         Back home
       </Link>
       <h1>Manage your universes</h1>
-      <select value={universe?.id}>
+      <select defaultValue={universe?.id}>
         {universes.map((universe) => (
           <option key={universe.id} value={universe.id}>
             {universe.name}
