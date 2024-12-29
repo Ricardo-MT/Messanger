@@ -5,6 +5,7 @@ import defaultImage from "../../../assets/default-avatar.png";
 import { useState } from "react";
 import { Profile } from "../../../interfaces/profile";
 import { CreateProfile } from "./create/CreateProfile";
+import { EditProfile } from "./edit/EditProfile";
 
 export const ManageProfilesPage = () => {
   const { loading, error, profiles } = useAppSelector(manageProfilesState);
@@ -19,6 +20,10 @@ export const ManageProfilesPage = () => {
 
   const handleStartCreatingProfile = () => {
     setCrudState({ action: "create" });
+  };
+
+  const handleStartEditingProfile = (profile: Profile) => {
+    setCrudState({ action: "edit", profile });
   };
 
   const onDone = () => {
@@ -57,9 +62,16 @@ export const ManageProfilesPage = () => {
                 </td>
                 <td>{profile.name}</td>
                 <td>{profile.alias}</td>
+                <td>{profile.createdAt}</td>
                 <td>{profile.updatedAt}</td>
                 <td>
-                  <button>Edit</button>
+                  <button
+                    onClick={() => {
+                      handleStartEditingProfile(profile);
+                    }}
+                  >
+                    Edit
+                  </button>
                 </td>
               </tr>
             ))}
@@ -67,8 +79,18 @@ export const ManageProfilesPage = () => {
         </table>
       </div>
       {crudState?.action === "create" && <CreateProfile onDone={onDone} />}
+      {crudState?.action === "edit" && (
+        <EditProfile onDone={onDone} profile={crudState.profile} />
+      )}
     </>
   );
 };
 
-const profileTableHeaders = ["", "Name", "Alias", "Last updated", "Actions"];
+const profileTableHeaders = [
+  "",
+  "Name",
+  "Alias",
+  "Created",
+  "Last updated",
+  "Actions",
+];
