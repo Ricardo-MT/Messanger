@@ -11,6 +11,7 @@ import {
   limit,
   onSnapshot,
   getDocs,
+  Unsubscribe,
 } from "firebase/firestore";
 import { Chat, chatFromDoc } from "../../../interfaces/chat";
 import { collections, db } from "../../../settings/collections";
@@ -84,6 +85,7 @@ export const useChat = () => {
   );
 
   const fetchLastMessagesFromChats = useCallback(async (chats: Chat[]) => {
+    const unsubscribeFromChats: Record<string, Unsubscribe | undefined> = {};
     try {
       await Promise.all(
         chats.map(async (chat) => {
@@ -105,13 +107,24 @@ export const useChat = () => {
             })
           );
           const lastTimestamp = messages[0].timestamp;
-          listenToChats(chat, lastTimestamp);
+          unsubscribeFromChats[chat.id] = await listenToChats(
+            chat,
+            lastTimestamp
+          );
         })
       );
     } catch (error) {
       console.error(error);
       dispatch(setError((error as FirebaseError).message));
     }
+    return () => {
+      Object.keys(unsubscribeFromChats).forEach((chatId) => {
+        const unsubscribe = unsubscribeFromChats[chatId];
+        if (unsubscribe) {
+          unsubscribe();
+        }
+      });
+    };
   }, []);
 
   const fetchChatsByProfile = useCallback(

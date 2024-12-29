@@ -6,6 +6,7 @@ import { ROUTE_NAMES } from "../../settings/routes";
 import { useAppSelector } from "../../store/storeHooks";
 import { manageClientState } from "./manageClientSlice";
 import { useManageProfiles } from "./manageProfiles/useManageProfile";
+import css from "./manage.module.css";
 
 export const ManageLayout = () => {
   useEffect(() => {
@@ -16,7 +17,7 @@ export const ManageLayout = () => {
   const { error, loading, universes, universe } =
     useAppSelector(manageClientState);
   return (
-    <>
+    <div className={css.container}>
       <Link
         style={{
           float: "right",
@@ -26,7 +27,12 @@ export const ManageLayout = () => {
         Back home
       </Link>
       <h1>Manage your universes</h1>
-      <select defaultValue={universe?.id}>
+      <select
+        defaultValue={universe?.id}
+        style={{
+          alignSelf: "flex-end",
+        }}
+      >
         {universes.map((universe) => (
           <option key={universe.id} value={universe.id}>
             {universe.name}
@@ -34,7 +40,13 @@ export const ManageLayout = () => {
         ))}
       </select>
       {error ? <p>{error}</p> : null}
-      {loading ? <p>Loading ...</p> : <Outlet />}
-    </>
+      {loading ? (
+        <p>Loading ...</p>
+      ) : (
+        <div className={css.content}>
+          <Outlet />
+        </div>
+      )}
+    </div>
   );
 };
