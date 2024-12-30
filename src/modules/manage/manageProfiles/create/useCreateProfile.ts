@@ -1,30 +1,36 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAppSelector } from "../../../../store/storeHooks";
 import { manageClientState } from "../../manageClientSlice";
 import { FirebaseError } from "firebase/app";
-import { addDoc, doc } from "firebase/firestore";
+import { addDoc, doc, setDoc } from "firebase/firestore";
 import { collections, db } from "../../../../settings/collections";
-import { firestoreDb } from "../../../../settings/firebaseApp";
+import { firestoreDb, storageApp } from "../../../../settings/firebaseApp";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 type CreateProfile = {
   alias: string;
-  avatar?: string;
+  avatar?: File;
   name: string;
 };
 
 const initialState: CreateProfile = {
   alias: "",
-  avatar: "",
+  avatar: undefined,
   name: "",
 };
 
 export const useCreateProfile = () => {
   const { universe } = useAppSelector(manageClientState);
   const [profile, setProfile] = useState<CreateProfile>(initialState);
+  const [avatarPreview, setAvatarPreview] = useState<string | undefined>(
+    undefined
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
   const onAliasChange = (alias: string) => setProfile({ ...profile, alias });
   const onNameChange = (name: string) => setProfile({ ...profile, name });
+  const onAvatarChange = (avatar: File) => setProfile({ ...profile, avatar });
   const onSubmit = async () => {
     if (!universe || !profile.name || !profile.alias) {
       return;
@@ -33,13 +39,26 @@ export const useCreateProfile = () => {
     try {
       const universeRef = doc(firestoreDb, collections.UNIVERSE, universe!.id);
       const now = new Date();
-      await addDoc(db.profile, {
+      const res = await addDoc(db.profile, {
         universeId: universeRef,
         alias: profile.alias,
         name: profile.name,
         createdAt: now,
         updatedAt: now,
       });
+      if (profile.avatar) {
+        const path = `${universe?.clientId}/${universe?.id}/profiles/${res.id}/avatar.jpg`;
+        const avatarRef = ref(storageApp, path);
+        const imageRes = await uploadBytes(avatarRef, profile.avatar);
+        const avatarUrl = await getDownloadURL(imageRes.ref);
+        await setDoc(
+          doc(db.profile, res.id),
+          {
+            avatar: avatarUrl,
+          },
+          { merge: true }
+        );
+      }
       setLoading(false);
       return true;
     } catch (error) {
@@ -51,9 +70,31 @@ export const useCreateProfile = () => {
     return false;
   };
 
+  useEffect(() => {
+    let urlObject = "";
+    if (profile.avatar) {
+      urlObject = URL.createObjectURL(profile.avatar);
+      setAvatarPreview(urlObject);
+    }
+    return () => {
+      if (urlObject) {
+        URL.revokeObjectURL(urlObject);
+      }
+    };
+  }, [profile.avatar]);
+
   const value = useMemo(
-    () => ({ profile, onAliasChange, onNameChange, onSubmit, loading, error }),
-    [profile, loading, error]
+    () => ({
+      profile,
+      avatarPreview,
+      onAliasChange,
+      onNameChange,
+      onAvatarChange,
+      onSubmit,
+      loading,
+      error,
+    }),
+    [profile, avatarPreview, loading, error]
   );
   return value;
 };

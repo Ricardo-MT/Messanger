@@ -8,7 +8,15 @@ type Props = {
 
 export const CreateProfile = ({ onDone }: Props) => {
   const contentRef = useRef<HTMLDivElement>(null);
-  const { error, onAliasChange, onNameChange, onSubmit } = useCreateProfile();
+  const {
+    avatarPreview,
+    error,
+    onAliasChange,
+    onNameChange,
+    onAvatarChange,
+    onSubmit,
+  } = useCreateProfile();
+
   return (
     <div
       onClick={(e) => {
@@ -34,6 +42,24 @@ export const CreateProfile = ({ onDone }: Props) => {
             }
           }}
         >
+          {avatarPreview && (
+            <img className={css.avatar} src={avatarPreview} alt="" />
+          )}
+          <label>
+            Profile image
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  if (e.target.files) {
+                    const file = e.target.files[0];
+                    onAvatarChange(file);
+                  }
+                }}
+              />
+            </div>
+          </label>
           <label>
             Name
             <div>

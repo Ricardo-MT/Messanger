@@ -10,8 +10,16 @@ type Props = {
 
 export const EditProfile = ({ onDone, profile }: Props) => {
   const contentRef = useRef<HTMLDivElement>(null);
-  const { newProfile, error, onAliasChange, onNameChange, onSubmit } =
-    useEditProfile(profile);
+  const {
+    newProfile,
+    avatarPreview,
+    error,
+    onAliasChange,
+    onNameChange,
+    onAvatarChange,
+    onSubmit,
+  } = useEditProfile(profile);
+
   return (
     <div
       onClick={(e) => {
@@ -37,6 +45,28 @@ export const EditProfile = ({ onDone, profile }: Props) => {
             }
           }}
         >
+          {(avatarPreview || profile.avatar) && (
+            <img
+              className={css.avatar}
+              src={avatarPreview || profile.avatar}
+              alt=""
+            />
+          )}
+          <label>
+            Profile image
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  if (e.target.files) {
+                    const file = e.target.files[0];
+                    onAvatarChange(file);
+                  }
+                }}
+              />
+            </div>
+          </label>
           <label>
             Name
             <div>

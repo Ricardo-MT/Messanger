@@ -24,3 +24,12 @@ form {
     flex-direction: column;
     gap: 1rem;
 }
+
+.avatar {
+    height: 5rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 1px solid var(--primary);
+    object-fit: cover;
+    align-self: center;
+}

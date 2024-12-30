@@ -16,6 +16,7 @@ export const universeFromDoc = (id: string, data: DocumentData): Universe => {
     createdAt: data.createdAt.toDate().toLocaleDateString("es-ES"),
     updatedAt: data.updatedAt.toDate().toLocaleDateString("es-ES"),
     managers: Array.from(data.managers?.map((d: { id: string }) => d.id) || []),
+    clientId: data.clientId.id,
     id,
   } as Universe;
 };
