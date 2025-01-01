@@ -8,5 +8,6 @@ export const ROUTE_NAMES = {
   SETTINGS: "/app/settings",
   MANAGE: "/manage",
   MANAGE_PROFILES: "/manage/profiles",
+  MANAGE_CHATS: "/manage/chats",
   NOT_FOUND: "/404",
 };

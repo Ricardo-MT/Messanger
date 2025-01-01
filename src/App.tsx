@@ -15,6 +15,7 @@ import { ChatPage } from "./modules/universe/chat/page.tsx";
 import { ManageProfilesPage } from "./modules/manage/manageProfiles/page.tsx";
 import { servicesCollection } from "./services/servicesCollection.ts";
 import { ManageLayout } from "./modules/manage/layout.tsx";
+import { ManageChatsPage } from "./modules/manage/manageChats/page.tsx";
 
 function App() {
   return (
@@ -38,6 +39,10 @@ function App() {
                   <Route
                     path={ROUTE_NAMES.MANAGE_PROFILES}
                     element={<ManageProfilesPage />}
+                  />
+                  <Route
+                    path={ROUTE_NAMES.MANAGE_CHATS}
+                    element={<ManageChatsPage />}
                   />
                 </Route>
               </Route>

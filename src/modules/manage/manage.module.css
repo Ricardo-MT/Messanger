@@ -1,14 +1,25 @@
 .container {
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  flex-direction: row;
   height: calc(100%);
   overflow: hidden;
+}
+
+.navigator {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: .5rem;
+  align-items: center;
+  width: 12rem;
+  background-color: var(--background);
+  border-right: 1px solid var(--primary);
 }
 
 .content {
   display: flex;
   flex: 1;
   flex-direction: column;
+  align-self: stretch;
   overflow: auto;
 }

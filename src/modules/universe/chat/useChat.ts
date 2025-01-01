@@ -106,7 +106,7 @@ export const useChat = () => {
               messages,
             })
           );
-          const lastTimestamp = messages[0].timestamp;
+          const lastTimestamp = messages[0]?.timestamp || new Date();
           unsubscribeFromChats[chat.id] = await listenToChats(
             chat,
             lastTimestamp

@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router";
+import { Link, NavLink, Outlet } from "react-router";
 import { useManage } from "./useManage";
 import { useEffect } from "react";
 import { servicesCollection } from "../../services/servicesCollection";
@@ -18,35 +18,23 @@ export const ManageLayout = () => {
     useAppSelector(manageClientState);
   return (
     <div className={css.container}>
-      <Link
-        style={{
-          float: "right",
-        }}
-        to={ROUTE_NAMES.HOME}
-      >
-        Back home
-      </Link>
-      <h1>Manage your universes</h1>
-      <select
-        defaultValue={universe?.id}
-        style={{
-          alignSelf: "flex-end",
-        }}
-      >
-        {universes.map((universe) => (
-          <option key={universe.id} value={universe.id}>
-            {universe.name}
-          </option>
-        ))}
-      </select>
-      {error ? <p>{error}</p> : null}
-      {loading ? (
-        <p>Loading ...</p>
-      ) : (
-        <div className={css.content}>
-          <Outlet />
-        </div>
-      )}
+      <div className={css.navigator}>
+        <h3>Manage your universes</h3>
+        <Link to={ROUTE_NAMES.HOME}>Back home</Link>
+        <select defaultValue={universe?.id}>
+          {universes.map((universe) => (
+            <option key={universe.id} value={universe.id}>
+              {universe.name}
+            </option>
+          ))}
+        </select>
+        <NavLink to={ROUTE_NAMES.MANAGE_PROFILES}>Profiles</NavLink>
+        <NavLink to={ROUTE_NAMES.MANAGE_CHATS}>Chats</NavLink>
+      </div>
+      <div className={css.content}>
+        {error ? <p>{error}</p> : null}
+        {loading ? <p>Loading ...</p> : <Outlet />}
+      </div>
     </div>
   );
 };

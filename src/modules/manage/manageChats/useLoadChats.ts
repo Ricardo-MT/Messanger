@@ -1,0 +1,267 @@
+import { ChangeEvent, useState } from "react";
+import { Profile } from "../../../interfaces/profile";
+import { useAppSelector } from "../../../store/storeHooks";
+import { manageProfilesState } from "../manageProfiles/manageProfilesSlice";
+import date from "date-and-time";
+import { ChatService } from "../../../services/chat";
+import { MessageService } from "../../../services/message";
+import { manageClientState } from "../manageClientSlice";
+
+type ParsedData = {
+  metadata: {
+    profileIds: string[];
+    profileCreatorId: string;
+    chatName: string;
+  };
+  chatMessages: {
+    profileId: string;
+    message: string;
+    timestamp: Date;
+  }[];
+};
+
+type Props = {
+  chatService: ChatService;
+  messageService: MessageService;
+};
+
+export const useLoadChats = ({ chatService, messageService }: Props) => {
+  const { universe } = useAppSelector(manageClientState);
+  const { profiles } = useAppSelector(manageProfilesState);
+  const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [parsedData, setParsedData] = useState<ParsedData[] | null>(null);
+
+  const loadChats = async (e: ChangeEvent<HTMLInputElement>) => {
+    try {
+      const files = e.target.files;
+      if (!files || !files.length) {
+        return;
+      }
+      const parsedFiles = await Promise.all(
+        Array.from(files).map((file) => processFile(file))
+      );
+      setParsedData(parsedFiles);
+      setSelectedFiles(files);
+      setError("");
+    } catch (error) {
+      console.error("Error loading chats", error);
+      const message = (error as Error).message || "Error loading chats";
+      setError(message);
+      // Clear input value to allow reuploading the same file
+      e.target.value = "";
+      e.target.files = null;
+      e.target.type = "text";
+      e.target.type = "file";
+      setSelectedFiles(null);
+    }
+  };
+  const processFile = async (file: File): Promise<ParsedData> => {
+    const reader = new FileReader();
+    reader.readAsText(file);
+    return new Promise<ParsedData>((resolve, reject) => {
+      reader.onload = () => {
+        try {
+          const result = reader.result as string;
+          const fileContent = result.split("\n").map((line) => {
+            const cell = [];
+            // Split the line by commas. Beware that commas inside quotes are not split.
+            let insideQuotes = false;
+            let cellValue = "";
+            for (let i = 0; i < line.length; i++) {
+              const char = line[i];
+              if (char === '"') {
+                insideQuotes = !insideQuotes;
+              } else if (char === "," && !insideQuotes) {
+                cell.push(cellValue);
+                cellValue = "";
+              } else {
+                cellValue += char;
+              }
+            }
+            cell.push(cellValue);
+            return cell;
+          });
+          // const metadataHeaders = fileContent[0];
+          const rawMetadata = fileContent[1];
+          // const chatHeader = fileContent[3];
+          const chatMessagesStartIndex = 4;
+          let chatMessagesEndIndex = fileContent.findIndex(
+            (line, i) => i >= 4 && line.length !== 3
+          );
+          if (chatMessagesEndIndex === -1) {
+            chatMessagesEndIndex = fileContent.length;
+          }
+          const rawChatMessages = fileContent.slice(
+            chatMessagesStartIndex,
+            chatMessagesEndIndex
+          );
+          const metadata = validateMetadata(rawMetadata, profiles);
+          const chatMessages = validateChats(rawChatMessages, profiles);
+          resolve({
+            metadata,
+            chatMessages,
+          });
+        } catch (error) {
+          console.error("Error processing file " + file.name, error);
+          reject(error);
+        }
+      };
+    });
+  };
+  const createChatsAndMessagesFromFiles = async () => {
+    if (!universe || !parsedData) {
+      return;
+    }
+    setLoading(true);
+    await Promise.all(
+      parsedData.map((data) =>
+        createChatsAndMessagesFromFile(data, universe.id)
+      )
+    );
+    setLoading(false);
+    setSelectedFiles(null);
+  };
+  const createChatsAndMessagesFromFile = async (
+    parsedData: ParsedData,
+    universeId: string
+  ) => {
+    try {
+      let existingChats =
+        (await chatService.getChatsByName(
+          parsedData!.metadata.chatName,
+          universeId
+        )) || [];
+      if (parsedData.metadata.profileIds.length === 2) {
+        const privateChat = await chatService.getPrivateChatByMembers(
+          parsedData.metadata.profileIds,
+          universeId
+        );
+        if (privateChat) {
+          existingChats = [...existingChats, ...privateChat];
+        }
+      }
+      if (existingChats.length) {
+        await Promise.all(
+          existingChats.map(async (chat) => {
+            await messageService.removeMessagesByChat(chat.id);
+            await chatService.removeChat(chat.id);
+          })
+        );
+      }
+      const newChat = await chatService.createChat({
+        universeId: universeId,
+        name: parsedData!.metadata.chatName,
+        isGroup: parsedData!.metadata.profileIds.length > 2,
+        members: parsedData!.metadata.profileIds,
+        creatorId: parsedData!.metadata.profileCreatorId,
+      });
+      await Promise.all(
+        parsedData!.chatMessages.map((chatMessage) =>
+          messageService.createMessage({
+            chatId: newChat.id,
+            text: chatMessage.message,
+            senderId: chatMessage.profileId,
+            timestamp: chatMessage.timestamp,
+          })
+        )
+      );
+      setError("");
+    } catch (error) {
+      console.error("Error creating chats and messages from file", error);
+      const message =
+        (error as Error).message ||
+        "Error creating chats and messages from file";
+      setError(message);
+    }
+  };
+  return {
+    loadChats,
+    selectedFiles,
+    createChatsAndMessagesFromFiles,
+    error,
+    loading,
+  };
+};
+
+const validateMetadata = (
+  metadata: string[],
+  existingProfiles: Profile[]
+): {
+  profileIds: string[];
+  profileCreatorId: string;
+  chatName: string;
+} => {
+  const [profileAliasesList, profileCreatorAlias, chatName] = metadata;
+  const profileAliases = profileAliasesList.split(",");
+  if (profileAliases.length < 2) {
+    throw new Error("There should be at least two profiles");
+  }
+  const existingProfileAliasesSet = new Set(
+    existingProfiles.map((profile) => profile.alias)
+  );
+  for (const alias of profileAliases) {
+    if (!existingProfileAliasesSet.has(alias)) {
+      throw new Error(`Profile with alias ${alias} not found`);
+    }
+  }
+  const profileIds = profileAliases.map(
+    (alias) => existingProfiles.find((profile) => profile.alias === alias)!.id
+  );
+  if (!profileAliases.includes(profileCreatorAlias)) {
+    throw new Error(
+      "Profile creator alias should be in the profile aliases list"
+    );
+  }
+  const profileCreatorId = existingProfiles.find(
+    (profile) => profile.alias === profileCreatorAlias
+  )!.id;
+  if (profileAliases.length > 2 && !chatName) {
+    throw new Error("Chat name is required for group chats");
+  }
+  return { profileIds, profileCreatorId, chatName };
+};
+
+const validateChats = (
+  chats: string[][],
+  existingProfiles: Profile[]
+): {
+  profileId: string;
+  message: string;
+  timestamp: Date;
+}[] => {
+  const existingProfileMap = new Map(
+    existingProfiles.map((profile) => [profile.alias, profile])
+  );
+  let lastAlias = "";
+  const chatMessages = [];
+  for (const chat of chats) {
+    const [alias, message, timestamp] = chat;
+    if (alias) {
+      lastAlias = alias;
+    }
+    if (!lastAlias) {
+      throw new Error("Alias is required");
+    }
+    if (!existingProfileMap.has(lastAlias)) {
+      throw new Error(`Profile with alias ${lastAlias} not found`);
+    }
+    if (!message) {
+      throw new Error("Message is required");
+    }
+    if (!timestamp) {
+      throw new Error("Timestamp is required");
+    }
+    const timestampDate = date.parse(timestamp, "DD/MM/YYYY HH:mm:ss", true);
+    if (isNaN(timestampDate.getTime())) {
+      throw new Error("Invalid timestamp");
+    }
+    chatMessages.push({
+      profileId: existingProfileMap.get(lastAlias)!.id,
+      message,
+      timestamp: timestampDate,
+    });
+  }
+  return chatMessages;
+};
