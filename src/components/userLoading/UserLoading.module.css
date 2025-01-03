@@ -1,0 +1,48 @@
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--background);
+  color: white;
+  z-index: 1000;
+}
+
+.loadingSpinner {
+    width: 4rem;
+    height: 4rem;
+}
+
+.loadingSpinnerItem {
+    width: 4rem;
+    aspect-ratio: 1;
+    position: absolute;
+    animation: spin 1.2s infinite ease;
+    animation-delay: calc(var(--animation-order) * 130ms);
+    -webkit-animation-delay: calc(var(--animation-order) * 130ms);
+    -moz-animation-delay: calc(var(--animation-order) * 130ms);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loadingSpinnerItem > * {
+    width: .6rem;
+    height: .6rem;
+    background-color: var(--primary);
+    border-radius: 50%;
+    transform: translateY(-1.5rem);
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
