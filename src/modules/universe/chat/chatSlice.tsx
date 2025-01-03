@@ -26,25 +26,31 @@ export const chatSlice = createSlice({
     setChats: (state, action: PayloadAction<Chat[]>) => {
       state.chats = action.payload;
     },
-    appendChats: (state, action: PayloadAction<Chat[]>) => {
-      state.chats = [...state.chats, ...action.payload];
-    },
-    removeChats: (state, action: PayloadAction<string[]>) => {
-      const chatIds = action.payload;
-      for (const chatId of chatIds) {
-        state.chats = state.chats.filter((chat) => chat.id !== chatId);
-        delete state.messages[chatId];
-        if (state.chat?.id === chatId) {
-          state.chat = null;
+    updateChatsUpgrade: (
+      state,
+      action: PayloadAction<{ add: Chat[]; modify: Chat[]; remove: string[] }>
+    ) => {
+      const { add, modify, remove } = action.payload;
+      let modifiedChats = state.chats
+        .filter((chat) => !remove.includes(chat.id))
+        .map((chat) => modify.find((c) => c.id === chat.id) || chat);
+      const addFiltered = add.filter(
+        (chat) => !modifiedChats.find((c) => c.id === chat.id)
+      );
+      for (const chat of addFiltered) {
+        let indexToInsert = modifiedChats.findIndex(
+          (c) => chat.updatedAt > c.updatedAt
+        );
+        if (indexToInsert === -1) {
+          indexToInsert = modifiedChats.length - 1;
         }
+        modifiedChats = [
+          ...modifiedChats.slice(0, indexToInsert),
+          chat,
+          ...modifiedChats.slice(indexToInsert),
+        ];
       }
-    },
-    updateChats: (state, action: PayloadAction<Chat[]>) => {
-      const chats = action.payload;
-      state.chats = state.chats.map((chat) => {
-        const newChat = chats.find((c) => c.id === chat.id);
-        return newChat || chat;
-      });
+      state.chats = modifiedChats;
     },
     setChat: (state, action: PayloadAction<Chat | null>) => {
       state.chat = action.payload;

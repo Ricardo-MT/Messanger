@@ -20,15 +20,13 @@ import { Message, messageFromDoc } from "../../../interfaces/message";
 
 const {
   setChats,
-  appendChats,
-  updateChats,
-  removeChats,
   updateMessages,
   attachMessages,
   reset,
   success,
   setError,
   startLoading,
+  updateChatsUpgrade,
 } = chatSlice.actions;
 
 export const useChat = () => {
@@ -158,14 +156,14 @@ export const useChat = () => {
               removedChats.push(change.doc.id);
             }
           }
-          if (modifiedChats.length) {
-            dispatch(updateChats(modifiedChats));
-          }
-          if (removedChats.length) {
-            dispatch(removeChats(removedChats));
-          }
+          dispatch(
+            updateChatsUpgrade({
+              add: addedChats,
+              modify: modifiedChats,
+              remove: removedChats,
+            })
+          );
           if (addedChats.length) {
-            dispatch(appendChats(addedChats));
             fetchLastMessagesFromChats(addedChats);
           }
         });
