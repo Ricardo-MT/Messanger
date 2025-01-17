@@ -111,11 +111,10 @@
   justify-content: center;
 }
 
-.message {
+.messageContent {
   padding: .5rem;
   border-radius: 10px;
   width: fit-content;
-  max-width: 80%;
   text-align: left;
   animation: panIn .5s ease;
   display: flex;
@@ -142,15 +141,51 @@
   }
 }
 
-.message.myMessage {
-  align-self: flex-end;
-  color: white;
-  border-bottom-right-radius: 0 !important;
+.messageContainer {
+  display: flex;
+  flex-direction: row;
+  gap: .5rem;
+  width: fit-content;
+  max-width: 80%;
 }
 
-.message.otherMessage {
+.messageContainer.myMessage {
+  align-self: flex-end;
+  justify-content: flex-end;
+}
+
+.messageContainer.otherMessage {
   align-self: flex-start;
+  justify-content: flex-start;
+}
+
+.messageContent {
+  flex: 1;
+}
+
+.messageContainer.myMessage .messageContent {
+  border-bottom-right-radius: 0 !important;
+  align-items: flex-end;
+}
+
+.messageContainer.otherMessage .messageContent {
   border-bottom-left-radius: 0 !important;
+}
+
+.chatBody .messageContainer.otherMessage .messageProfileImage {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
+  align-self: flex-end;
+}
+
+.chatBody .messageContainer.otherMessage .messageProfileImage:not([data-profile-image=""]) {
+  background-color: #f8f9fa;
+  background-image: var(--profile-image);
 }
 
 .chatGoBack {

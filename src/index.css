@@ -169,11 +169,11 @@ button:focus-visible {
   background-position: top left;
 }
 
-.message.myMessage {
+.messageContainer.myMessage .messageContent {
   background-color: var(--message-mine);
 }
 
-.message.otherMessage {
+.messageContainer.otherMessage .messageContent {
   background-color: var(--message-other);
 }
 
@@ -183,10 +183,10 @@ button:focus-visible {
   align-self: flex-end;
 }
 
-.message.myMessage .timestamp {
+.messageContainer.myMessage .messageContent .timestamp {
   color: var(--timestamp-on-message-mine);
 }
 
-.message.otherMessage .timestamp {
+.messageContainer.otherMessage .messageContent .timestamp {
   color: var(--timestamp-on-message-other);
 }
