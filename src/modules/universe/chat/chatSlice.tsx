@@ -60,8 +60,14 @@ export const chatSlice = createSlice({
       action: PayloadAction<{ chatId: string; messages: Message[] }>
     ) => {
       const chatId = action.payload.chatId;
-      const messages = action.payload.messages;
-      state.messages[chatId] = [...(state.messages[chatId] || []), ...messages];
+      const existingMessages = state.messages[chatId] || [];
+      const newMessages = action.payload.messages;
+      state.messages[chatId] = [
+        ...existingMessages,
+        ...newMessages.filter(
+          (m) => !existingMessages.find((em) => em.id === m.id)
+        ),
+      ];
     },
     updateMessages: (
       state,
@@ -101,6 +107,7 @@ export const chatSlice = createSlice({
       state.chat = null;
       state.messages = {};
       state.error = "";
+      state.loading = true;
     },
     success: (state) => {
       state.error = "";

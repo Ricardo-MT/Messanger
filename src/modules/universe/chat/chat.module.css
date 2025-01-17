@@ -72,6 +72,10 @@
   aspect-ratio: 1;
   border-radius: 50%;
   overflow: clip;
+  background-color: var(--background-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .chatPicture {

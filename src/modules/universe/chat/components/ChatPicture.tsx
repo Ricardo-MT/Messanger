@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Chat } from "../../../../interfaces/chat";
 import css from "../chat.module.css";
+import { BiChat } from "react-icons/bi";
 
 type Props = {
   chat: Chat;
@@ -8,8 +9,11 @@ type Props = {
 };
 export const ChatPicture = ({ chat, currentUserId }: Props) => {
   const picture = useMemo(
-    () => chat.members.find((member) => member.id !== currentUserId)?.avatar,
-    [chat.members, currentUserId]
+    () =>
+      chat.isGroup
+        ? null
+        : chat.members.find((member) => member.id !== currentUserId)?.avatar,
+    [chat, currentUserId]
   );
   return (
     <div className={`chatPictureContainer ${css.chatPictureContainer}`}>
@@ -20,7 +24,7 @@ export const ChatPicture = ({ chat, currentUserId }: Props) => {
           alt="chat"
         />
       ) : (
-        <div>{chat.name.padStart(2)}</div>
+        <BiChat size={24} color="var(--primary)" />
       )}
     </div>
   );

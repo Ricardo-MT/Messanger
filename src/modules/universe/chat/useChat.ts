@@ -19,7 +19,6 @@ import { firestoreDb } from "../../../settings/firebaseApp";
 import { Message, messageFromDoc } from "../../../interfaces/message";
 
 const {
-  setChats,
   updateMessages,
   attachMessages,
   reset,
@@ -30,15 +29,8 @@ const {
 } = chatSlice.actions;
 
 export const useChat = () => {
-  const { profile, universe } = useAppSelector(universeState);
+  const { profile } = useAppSelector(universeState);
   const dispatch = useAppDispatch();
-  // const { chats, chat } = useAppSelector(chatState);
-
-  // useEffect(() => {
-  //   if (!chat && chats.length) {
-  //     dispatch(setChat(chats[0]));
-  //   }
-  // }, [chats, chat]);
 
   const listenToChats = useCallback(
     async (chat: Chat, latestTimestamp: Date) => {
@@ -125,69 +117,65 @@ export const useChat = () => {
     };
   }, []);
 
-  const fetchChatsByProfile = useCallback(
-    async (profileId: string, universeId: string) => {
-      try {
-        dispatch(startLoading());
-        const profileRef = doc(firestoreDb, collections.PROFILE, profileId);
-        const universeRef = doc(firestoreDb, collections.UNIVERSE, universeId);
-        const q = query(
-          db.chat,
-          where("universeId", "==", universeRef),
-          where("members", "array-contains", profileRef),
-          orderBy("updatedAt", "desc")
+  const fetchChatsByProfile = useCallback(async (profileId: string) => {
+    try {
+      dispatch(startLoading());
+      const profileRef = doc(firestoreDb, collections.PROFILE, profileId);
+      const q = query(
+        db.chat,
+        where("members", "array-contains", profileRef),
+        orderBy("updatedAt", "desc")
+      );
+      const suscriberToChats = onSnapshot(q, async (snapshot) => {
+        const addedChats: Chat[] = [];
+        const modifiedChats: Chat[] = [];
+        const removedChats: string[] = [];
+        for (const change of snapshot.docChanges()) {
+          if (change.type === "added") {
+            addedChats.push(
+              await chatFromDoc(change.doc.id, change.doc.data())
+            );
+          }
+          if (change.type === "modified") {
+            modifiedChats.push(
+              await chatFromDoc(change.doc.id, change.doc.data())
+            );
+          }
+          if (change.type === "removed") {
+            removedChats.push(change.doc.id);
+          }
+        }
+        dispatch(
+          updateChatsUpgrade({
+            add: addedChats,
+            modify: modifiedChats,
+            remove: removedChats,
+          })
         );
-        const suscriberToChats = onSnapshot(q, async (snapshot) => {
-          const addedChats: Chat[] = [];
-          const modifiedChats: Chat[] = [];
-          const removedChats: string[] = [];
-          for (const change of snapshot.docChanges()) {
-            if (change.type === "added") {
-              addedChats.push(
-                await chatFromDoc(change.doc.id, change.doc.data())
-              );
-            }
-            if (change.type === "modified") {
-              modifiedChats.push(
-                await chatFromDoc(change.doc.id, change.doc.data())
-              );
-            }
-            if (change.type === "removed") {
-              removedChats.push(change.doc.id);
-            }
-          }
-          dispatch(
-            updateChatsUpgrade({
-              add: addedChats,
-              modify: modifiedChats,
-              remove: removedChats,
-            })
-          );
-          if (addedChats.length) {
-            fetchLastMessagesFromChats(addedChats);
-          }
-        });
-        dispatch(success());
-        return () => {
-          suscriberToChats();
-        };
-      } catch (error) {
-        console.error(error);
-        dispatch(setError((error as FirebaseError).message));
-      }
-    },
-    []
-  );
+        if (addedChats.length) {
+          fetchLastMessagesFromChats(addedChats);
+        }
+      });
+      dispatch(success());
+      return () => {
+        suscriberToChats();
+      };
+    } catch (error) {
+      console.error(error);
+      dispatch(setError((error as FirebaseError).message));
+    }
+  }, []);
 
   useEffect(() => {
     dispatch(reset());
-    if (profile) {
-      fetchChatsByProfile(profile.id, universe!.id);
-    } else {
-      dispatch(setChats([]));
+    if (profile?.id) {
+      fetchChatsByProfile(profile.id);
     }
-    return () => {
-      dispatch(setChats([]));
-    };
-  }, [profile]);
+  }, [profile?.id]);
+
+  const cleanup = useCallback(() => {
+    dispatch(reset());
+  }, []);
+
+  return cleanup;
 };

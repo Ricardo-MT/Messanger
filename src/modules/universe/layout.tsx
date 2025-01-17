@@ -8,11 +8,15 @@ import { servicesCollection } from "../../services/servicesCollection.ts";
 import { useEffect } from "react";
 
 export const UniverseLayout = () => {
+  const { cleanup: universeCleanup } = useUniverse();
+  const chatCleanup = useChat();
   useEffect(() => {
     servicesCollection.preferences.setLastModuleVisited("app");
+    return () => {
+      universeCleanup();
+      chatCleanup();
+    };
   }, []);
-  useUniverse();
-  useChat();
 
   return (
     <div className={css.container}>

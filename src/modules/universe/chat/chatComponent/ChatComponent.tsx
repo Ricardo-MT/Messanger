@@ -34,6 +34,16 @@ export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
     return items;
   }, [messages]);
 
+  const chatTitle = useMemo(() => {
+    if (!chat) {
+      return "";
+    }
+    if (chat.isGroup) {
+      return chat.name;
+    }
+    return chat.members.find((member) => member.id !== profile?.id)?.name ?? "";
+  }, [chat, profile]);
+
   if (!chat) {
     return <div>Select a chat</div>;
   }
@@ -56,7 +66,7 @@ export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
           onClick={onGoBack}
         />
         <ChatPicture chat={chat} currentUserId={profile!.id} />
-        {chat.members.find((member) => member.id !== profile?.id)?.name}
+        {chatTitle}
       </div>
       <div className={`${css.chatBody} ${chat.isGroup ? css.chatBody : ""}`}>
         {listItems.map((message, i) => {

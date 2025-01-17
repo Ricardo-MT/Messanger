@@ -4,7 +4,6 @@ import { Universe } from "../../interfaces/universe";
 import { Profile } from "../../interfaces/profile";
 
 interface UniverseState {
-  universesLoaded: boolean;
   shouldRefresh: boolean;
   universe: Universe | null;
   universes: Universe[];
@@ -14,7 +13,6 @@ interface UniverseState {
 }
 
 const initialState: UniverseState = {
-  universesLoaded: false,
   shouldRefresh: true,
   universe: null,
   universes: [],
@@ -29,7 +27,6 @@ export const universeSlice = createSlice({
   reducers: {
     setUniverses: (state, action: PayloadAction<Universe[]>) => {
       state.universes = action.payload;
-      state.universesLoaded = true;
     },
     setUniverse: (state, action: PayloadAction<Universe | null>) => {
       state.universe = action.payload;
@@ -47,6 +44,13 @@ export const universeSlice = createSlice({
       state.loading = false;
     },
     startLoading: (state) => {
+      state.loading = true;
+    },
+    reset: (state) => {
+      state.universe = null;
+      state.universes = [];
+      state.profile = null;
+      state.error = "";
       state.loading = true;
     },
   },

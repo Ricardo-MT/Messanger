@@ -16,13 +16,12 @@ import { FirebaseError } from "firebase/app";
 import { firestoreDb } from "../../settings/firebaseApp";
 import { profileFromDoc } from "../../interfaces/profile";
 
-const { startLoading, setUniverses, setUniverse, setProfile, setError } =
+const { startLoading, setUniverses, setUniverse, setProfile, setError, reset } =
   universeSlice.actions;
 
 export const useUniverse = () => {
   const { user } = useAppSelector(authState);
-  const { universe, universes, universesLoaded } =
-    useAppSelector(universeState);
+  const { universe, universes } = useAppSelector(universeState);
 
   const dispatch = useAppDispatch();
   const fetchUniverseList = useCallback(async () => {
@@ -56,7 +55,7 @@ export const useUniverse = () => {
       console.error(error);
       dispatch(setError((error as FirebaseError).message));
     }
-  }, [user, universesLoaded]);
+  }, [user]);
 
   const fetchProfileByUniverse = useCallback(
     async (universeId: string, userId: string) => {
@@ -98,8 +97,6 @@ export const useUniverse = () => {
   useEffect(() => {
     if (universe && user) {
       fetchProfileByUniverse(universe.id, user!.uid);
-    } else {
-      dispatch(setProfile(null));
     }
   }, [universe?.id, user?.uid]);
 
@@ -107,11 +104,16 @@ export const useUniverse = () => {
     fetchUniverseList();
   }, [fetchUniverseList]);
 
+  const cleanup = useCallback(() => {
+    dispatch(reset());
+  }, []);
+
   const value = useMemo(
     () => ({
       selectUniverse,
+      cleanup,
     }),
-    [selectUniverse]
+    [selectUniverse, cleanup]
   );
   return value;
 };
