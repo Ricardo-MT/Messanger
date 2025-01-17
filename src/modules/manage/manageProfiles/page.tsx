@@ -34,11 +34,11 @@ export const ManageProfilesPage = () => {
     <>
       <div className={css.manageProfilesPage}>
         <div className={css.pageHeader}>
-          <h2>Your profiles</h2>
-          <button onClick={handleStartCreatingProfile}>Create</button>
+          <h2>Tus perfiles</h2>
+          <button onClick={handleStartCreatingProfile}>Crear</button>
         </div>
         {error && <p>{error}</p>}
-        {loading && <p>Loading ...</p>}
+        {loading && <p>Cargando ...</p>}
         <table className={css.profilesTable}>
           <thead>
             <tr>
@@ -56,7 +56,7 @@ export const ManageProfilesPage = () => {
                     <img
                       className={css.avatar}
                       src={defaultImage}
-                      alt="Profile avatar"
+                      alt="Foto de perfil"
                     />
                   </picture>
                 </td>
@@ -70,7 +70,7 @@ export const ManageProfilesPage = () => {
                       handleStartEditingProfile(profile);
                     }}
                   >
-                    Edit
+                    Editar
                   </button>
                 </td>
               </tr>
@@ -88,9 +88,9 @@ export const ManageProfilesPage = () => {
 
 const profileTableHeaders = [
   "",
-  "Name",
+  "Nombre",
   "Alias",
-  "Created",
-  "Last updated",
-  "Actions",
+  "Creado",
+  "Última actualización",
+  "Acciones",
 ];

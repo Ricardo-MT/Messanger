@@ -9,7 +9,7 @@ export const ManageChatsPage = () => {
     });
   return (
     <>
-      <h2>Manage chats</h2>
+      <h2>Administra tus chats</h2>
       <input
         style={{
           alignSelf: "center",
@@ -26,7 +26,7 @@ export const ManageChatsPage = () => {
         onClick={() => selectedFiles && createChatsAndMessagesFromFiles()}
         disabled={!selectedFiles}
       >
-        Load chat from file
+        Carga chats desde tus archivos
       </button>
       {error && <p>{error}</p>}
     </>

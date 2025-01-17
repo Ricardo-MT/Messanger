@@ -14,7 +14,7 @@ const LoginView = () => {
 
   return (
     <>
-      <h2>Login</h2>
+      <h2>Bienvenido a Messanger</h2>
       <form
         onSubmit={(event) =>
           onSubmit({ event, email: state.email, password: state.password })
@@ -34,18 +34,18 @@ const LoginView = () => {
             type="password"
             value={state.password}
             onChange={(e) => onPasswordChange(e.target.value)}
-            placeholder="Password"
+            placeholder="Contraseña"
             autoComplete="current-password"
           />
         </div>
         <div>
-          <button type="submit">Login</button>
+          <button type="submit">Entrar</button>
         </div>
       </form>
       <p>{state.error}</p>
       <div>
-        <h3>Forgot your password?</h3>
-        <Link to={ROUTE_NAMES.RESET_PASSWORD}>Reset your password</Link>
+        <h3>¿Olvidaste tu contraseña?</h3>
+        <Link to={ROUTE_NAMES.RESET_PASSWORD}>Reestablecer contraseña</Link>
       </div>
     </>
   );

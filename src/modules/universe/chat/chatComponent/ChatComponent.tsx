@@ -45,7 +45,7 @@ export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
   }, [chat, profile]);
 
   if (!chat) {
-    return <div>Select a chat</div>;
+    return <div>Selecciona un chat</div>;
   }
 
   const handleSubmit = (

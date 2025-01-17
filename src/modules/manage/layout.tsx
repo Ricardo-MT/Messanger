@@ -19,8 +19,8 @@ export const ManageLayout = () => {
   return (
     <div className={css.container}>
       <div className={css.navigator}>
-        <h3>Manage your universes</h3>
-        <Link to={ROUTE_NAMES.HOME}>Back home</Link>
+        <h3>Administra tus universos</h3>
+        <Link to={ROUTE_NAMES.HOME}>Ir a inicio</Link>
         <select defaultValue={universe?.id}>
           {universes.map((universe) => (
             <option key={universe.id} value={universe.id}>
@@ -28,12 +28,12 @@ export const ManageLayout = () => {
             </option>
           ))}
         </select>
-        <NavLink to={ROUTE_NAMES.MANAGE_PROFILES}>Profiles</NavLink>
+        <NavLink to={ROUTE_NAMES.MANAGE_PROFILES}>Perfiles</NavLink>
         <NavLink to={ROUTE_NAMES.MANAGE_CHATS}>Chats</NavLink>
       </div>
       <div className={css.content}>
         {error ? <p>{error}</p> : null}
-        {loading ? <p>Loading ...</p> : <Outlet />}
+        {loading ? <p>Cargando ...</p> : <Outlet />}
       </div>
     </div>
   );

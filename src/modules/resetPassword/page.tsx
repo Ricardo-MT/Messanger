@@ -14,13 +14,14 @@ const ResetPasswordView = () => {
 
   return success ? (
     <>
-      <h2>Check your email!</h2>
-      <Link to={ROUTE_NAMES.LOGIN}>Back to login</Link>
+      <h2>Verifica tu email</h2>
+      <Link to={ROUTE_NAMES.LOGIN}>Inicia sesión</Link>
     </>
   ) : (
     <>
       <h2>
-        Type in your email, we'll send you an email with further instructions
+        Ingresa tu email, te enviaremos un correo para reestablecer tu
+        contraseña
       </h2>
       <form onSubmit={(event) => onSubmit({ event, email })}>
         <div>
@@ -32,11 +33,11 @@ const ResetPasswordView = () => {
           />
         </div>
         <div>
-          <button type="submit">Send reset password</button>
+          <button type="submit">Enviar correo de reestablecimiento</button>
         </div>
       </form>
       <p>{error}</p>
-      <Link to={ROUTE_NAMES.LOGIN}>Back to login</Link>
+      <Link to={ROUTE_NAMES.LOGIN}>Atrás a iniciar sesión</Link>
     </>
   );
 };

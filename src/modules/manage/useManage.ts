@@ -35,7 +35,7 @@ export const useManage = () => {
     } catch (error) {
       console.error(error);
       const message =
-        (error as FirebaseError).message || "Error fetching universes";
+        (error as FirebaseError).message || "Error cargando universos";
       dispatch(setError(message));
     }
   };

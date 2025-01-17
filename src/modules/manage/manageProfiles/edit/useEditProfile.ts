@@ -60,7 +60,7 @@ export const useEditProfile = (initialProfile: Profile) => {
       return true;
     } catch (error) {
       const message =
-        (error as FirebaseError).message || "Error creating profile";
+        (error as FirebaseError).message || "Error creando perfil";
       setError(message);
       setLoading(false);
     }

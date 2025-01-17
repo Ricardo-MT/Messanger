@@ -30,8 +30,8 @@ export const UniversesList = () => {
           key={universe.id}
         >
           <h3>{universe.name}</h3>
-          <p>Created at: {universe.createdAt}</p>
-          <p>Updated at: {universe.updatedAt}</p>
+          <p>Creado: {universe.createdAt}</p>
+          <p>Actualizado: {universe.updatedAt}</p>
         </div>
       ))}
     </>

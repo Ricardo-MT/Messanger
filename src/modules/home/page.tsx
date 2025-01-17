@@ -17,12 +17,12 @@ export const HomePage = () => {
           authApp.signOut();
         }}
       >
-        LOG OUT
+        CERRAR SESIÓN
       </button>
       <h1>Messanger</h1>
       <h3>{user?.email}</h3>
-      <Link to={ROUTE_NAMES.MANAGE}>Manage your universes</Link>
-      <h2>Your universes</h2>
+      <Link to={ROUTE_NAMES.MANAGE}>Administra tus universos</Link>
+      <h2>Tus universos</h2>
       <UniversesList />
     </div>
   );

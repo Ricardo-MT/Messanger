@@ -9,14 +9,13 @@ export const ProfilePage = () => {
   const { profile } = useAppSelector(universeState);
   return (
     <div className={css.container}>
-      <h2>My profile</h2>
       <picture>
         <source srcSet={profile?.avatar} type="image/webp" />
         <img className={css.avatar} src={defaultImage} alt={profile?.name} />
       </picture>
-      <p>{profile?.name || "No profile name"}</p>
-      <p>{profile?.alias || "No profile alias"}</p>
-      <Link to={ROUTE_NAMES.HOME}>Back home</Link>
+      <p>{profile?.name || "Sin nombre"}</p>
+      <p>{profile?.alias || "Sin alias"}</p>
+      <Link to={ROUTE_NAMES.HOME}>Atrás a inicio</Link>
     </div>
   );
 };

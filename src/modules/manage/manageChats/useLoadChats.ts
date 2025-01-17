@@ -47,7 +47,8 @@ export const useLoadChats = ({ chatService, messageService }: Props) => {
       setError("");
     } catch (error) {
       console.error("Error loading chats", error);
-      const message = (error as Error).message || "Error loading chats";
+      const message =
+        (error as Error).message || "Ha ocurrido un error cargando los chats";
       setError(message);
       // Clear input value to allow reuploading the same file
       e.target.value = "";
@@ -172,7 +173,7 @@ export const useLoadChats = ({ chatService, messageService }: Props) => {
       console.error("Error creating chats and messages from file", error);
       const message =
         (error as Error).message ||
-        "Error creating chats and messages from file";
+        "Error creando chats y mensajes desde el archivo";
       setError(message);
     }
   };
@@ -196,14 +197,14 @@ const validateMetadata = (
   const [profileAliasesList, profileCreatorAlias, chatName] = metadata;
   const profileAliases = profileAliasesList.split(",");
   if (profileAliases.length < 2) {
-    throw new Error("There should be at least two profiles");
+    throw new Error("Deben haber al menos dos alias de perfil");
   }
   const existingProfileAliasesSet = new Set(
     existingProfiles.map((profile) => profile.alias)
   );
   for (const alias of profileAliases) {
     if (!existingProfileAliasesSet.has(alias)) {
-      throw new Error(`Profile with alias ${alias} not found`);
+      throw new Error(`Perfil con alias ${alias} no encontrado`);
     }
   }
   const profileIds = profileAliases.map(
@@ -211,14 +212,14 @@ const validateMetadata = (
   );
   if (!profileAliases.includes(profileCreatorAlias)) {
     throw new Error(
-      "Profile creator alias should be in the profile aliases list"
+      "Alias del perfil creador debe estar en la lista de perfiles"
     );
   }
   const profileCreatorId = existingProfiles.find(
     (profile) => profile.alias === profileCreatorAlias
   )!.id;
   if (profileAliases.length > 2 && !chatName) {
-    throw new Error("Chat name is required for group chats");
+    throw new Error("Nombre del chat es obligatorio para chats grupales");
   }
   return { profileIds, profileCreatorId, chatName };
 };
@@ -242,20 +243,20 @@ const validateChats = (
       lastAlias = alias;
     }
     if (!lastAlias) {
-      throw new Error("Alias is required");
+      throw new Error("Alias es obligatorio");
     }
     if (!existingProfileMap.has(lastAlias)) {
-      throw new Error(`Profile with alias ${lastAlias} not found`);
+      throw new Error(`Perfil con alias ${lastAlias} no encontrado`);
     }
     if (!message) {
-      throw new Error("Message is required");
+      throw new Error("Texto de mensaje es obligatorio");
     }
     if (!timestamp) {
-      throw new Error("Timestamp is required");
+      throw new Error("Timestamp es obligatorio");
     }
     const timestampDate = date.parse(timestamp, "DD/MM/YYYY HH:mm:ss", true);
     if (isNaN(timestampDate.getTime())) {
-      throw new Error("Invalid timestamp");
+      throw new Error("Timestamp inválido");
     }
     chatMessages.push({
       profileId: existingProfileMap.get(lastAlias)!.id,

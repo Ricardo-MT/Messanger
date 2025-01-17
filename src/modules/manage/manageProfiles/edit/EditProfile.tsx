@@ -34,7 +34,7 @@ export const EditProfile = ({ onDone, profile }: Props) => {
       className={css.background}
     >
       <div ref={contentRef} className={css.content}>
-        <h2>Edit profile</h2>
+        <h2>Editar perfil</h2>
         <form
           onSubmit={async (e) => {
             e.preventDefault();
@@ -53,7 +53,7 @@ export const EditProfile = ({ onDone, profile }: Props) => {
             />
           )}
           <label>
-            Profile image
+            Foto de perfil
             <div>
               <input
                 type="file"
@@ -68,7 +68,7 @@ export const EditProfile = ({ onDone, profile }: Props) => {
             </div>
           </label>
           <label>
-            Name
+            Nombre
             <div>
               <input
                 value={newProfile.name}
@@ -87,7 +87,7 @@ export const EditProfile = ({ onDone, profile }: Props) => {
               />
             </div>
           </label>
-          <button type="submit">Save</button>
+          <button type="submit">Guardar</button>
         </form>
         {error ? <p>{error}</p> : null}
       </div>
