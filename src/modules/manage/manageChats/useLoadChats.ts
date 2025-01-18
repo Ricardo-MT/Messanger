@@ -6,12 +6,15 @@ import date from "date-and-time";
 import { ChatService } from "../../../services/chat";
 import { MessageService } from "../../../services/message";
 import { manageUniversesState } from "../manageUniversesSlice";
+import axios from "axios";
+import { Buffer } from "buffer";
 
 type ParsedData = {
   metadata: {
     profileIds: string[];
     profileCreatorId: string;
     chatName: string;
+    chatImageBuffer?: Buffer;
   };
   chatMessages: {
     profileId: string;
@@ -62,7 +65,7 @@ export const useLoadChats = ({ chatService, messageService }: Props) => {
     const reader = new FileReader();
     reader.readAsText(file);
     return new Promise<ParsedData>((resolve, reject) => {
-      reader.onload = () => {
+      reader.onload = async () => {
         try {
           const result = reader.result as string;
           const fileContent = result.split("\n").map((line) => {
@@ -98,7 +101,7 @@ export const useLoadChats = ({ chatService, messageService }: Props) => {
             chatMessagesStartIndex,
             chatMessagesEndIndex
           );
-          const metadata = validateMetadata(rawMetadata, profiles);
+          const metadata = await validateMetadata(rawMetadata, profiles);
           const chatMessages = validateChats(rawChatMessages, profiles);
           resolve({
             metadata,
@@ -154,6 +157,7 @@ export const useLoadChats = ({ chatService, messageService }: Props) => {
       const newChat = await chatService.createChat({
         universeId: universeId,
         name: parsedData!.metadata.chatName,
+        image: parsedData!.metadata.chatImageBuffer,
         isGroup: parsedData!.metadata.profileIds.length > 2,
         members: parsedData!.metadata.profileIds,
         creatorId: parsedData!.metadata.profileCreatorId,
@@ -186,15 +190,17 @@ export const useLoadChats = ({ chatService, messageService }: Props) => {
   };
 };
 
-const validateMetadata = (
+const validateMetadata = async (
   metadata: string[],
   existingProfiles: Profile[]
-): {
+): Promise<{
   profileIds: string[];
   profileCreatorId: string;
   chatName: string;
-} => {
-  const [profileAliasesList, profileCreatorAlias, chatName] = metadata;
+  chatImageBuffer?: Buffer;
+}> => {
+  const [profileAliasesList, profileCreatorAlias, chatName, chatImage] =
+    metadata;
   const profileAliases = profileAliasesList.split(",");
   if (profileAliases.length < 2) {
     throw new Error("Deben haber al menos dos alias de perfil");
@@ -221,7 +227,25 @@ const validateMetadata = (
   if (profileAliases.length > 2 && !chatName) {
     throw new Error("Nombre del chat es obligatorio para chats grupales");
   }
-  return { profileIds, profileCreatorId, chatName };
+  // If chat image exists, validate it's a valid URL and fetch the image to store it
+  let chatImageBuffer: Buffer | undefined;
+  if (chatImage) {
+    try {
+      const imageUrl = new URL(chatImage);
+      // Fetch the image to store it in storage
+      const imageResponse = await axios.get(imageUrl.toString(), {
+        responseType: "arraybuffer",
+      });
+      if (!Buffer.isBuffer(Buffer.from(imageResponse.data))) {
+        throw new Error("URL no apunta a una imagen válida");
+      }
+      chatImageBuffer = imageResponse.data;
+    } catch (error) {
+      console.error(error);
+      throw new Error("URL de imagen de chat inválida");
+    }
+  }
+  return { profileIds, profileCreatorId, chatName, chatImageBuffer };
 };
 
 const validateChats = (

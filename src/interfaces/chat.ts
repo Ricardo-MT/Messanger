@@ -6,6 +6,7 @@ export interface Chat {
   createdAt: Date;
   createdBy: string;
   isGroup: boolean;
+  image?: string;
   members: Profile[];
   name: string;
   universeId: string;
@@ -35,4 +36,14 @@ export const chatFromDoc = async (
     members,
     id,
   } as Chat;
+};
+
+export const getChatImageStoragePath = (universeId: string, chatId: string) => {
+  if (!universeId) {
+    throw new Error("Universe id is required to get chat image storage path");
+  }
+  if (!chatId) {
+    throw new Error("Chat id is required to get chat image storage path");
+  }
+  return `universes/${universeId}/chats/${chatId}/image.jpg`;
 };

@@ -7,10 +7,12 @@ import {
   query,
   where,
   and,
+  setDoc,
 } from "firebase/firestore";
-import { firestoreDb } from "../settings/firebaseApp";
+import { firestoreDb, storageApp } from "../settings/firebaseApp";
 import { collections, db } from "../settings/collections";
-import { Chat, chatFromDoc } from "../interfaces/chat";
+import { Chat, chatFromDoc, getChatImageStoragePath } from "../interfaces/chat";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 export interface ChatService {
   removeChat: (chatId: string) => Promise<void>;
@@ -22,11 +24,31 @@ export interface ChatService {
   createChat: (chat: {
     universeId: string;
     name: string;
+    image?: Buffer;
     isGroup: boolean;
     creatorId: string;
     members: string[];
   }) => Promise<Chat>;
+  addImageToChat: (chat: Chat, imageBuffer: Buffer) => Promise<void>;
 }
+
+const addImageToChat = async (chat: Chat, imageBuffer: Buffer) => {
+  const chatRef = doc(db.chat, chat.id);
+  const chatImageRef = ref(
+    storageApp,
+    getChatImageStoragePath(chat.universeId, chat.id)
+  );
+  const imageRes = await uploadBytes(chatImageRef, imageBuffer);
+  const imageUrl = await getDownloadURL(imageRes.ref);
+  await setDoc(
+    chatRef,
+    {
+      image: imageUrl,
+      updatedAt: new Date(),
+    },
+    { merge: true }
+  );
+};
 
 export const chatService = (): ChatService => ({
   removeChat: async (chatId: string) => {
@@ -74,6 +96,7 @@ export const chatService = (): ChatService => ({
   createChat: async (chat: {
     universeId: string;
     name: string;
+    image?: Buffer;
     isGroup: boolean;
     creatorId: string;
     members: string[];
@@ -94,6 +117,11 @@ export const chatService = (): ChatService => ({
       universeId: universeRef,
     });
     const chatDoc = await getDoc(chatRef);
-    return chatFromDoc(chatDoc.id, chatDoc.data()!);
+    const chatParsed = await chatFromDoc(chatDoc.id, chatDoc.data()!);
+    if (chat.image) {
+      await addImageToChat(chatParsed, chat.image);
+    }
+    return chatParsed;
   },
+  addImageToChat,
 });

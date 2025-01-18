@@ -11,7 +11,7 @@ export const ChatPicture = ({ chat, currentUserId }: Props) => {
   const picture = useMemo(
     () =>
       chat.isGroup
-        ? null
+        ? chat.image || null
         : chat.members.find((member) => member.id !== currentUserId)?.avatar,
     [chat, currentUserId]
   );

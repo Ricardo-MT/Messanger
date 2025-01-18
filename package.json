@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.0",
+    "axios": "^1.7.9",
+    "buffer": "^6.0.3",
     "date-and-time": "^3.6.0",
     "firebase": "^11.1.0",
     "react": "^18.3.1",
