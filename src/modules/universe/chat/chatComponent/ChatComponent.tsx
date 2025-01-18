@@ -85,13 +85,15 @@ export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
               ? profile!
               : chat.members.find((member) => member.id === message.senderId)!;
           const prevMessageSenderId =
-            typeof listItems[i - 1] === "string"
+            i === 0 || typeof listItems[i - 1] === "string"
               ? null
               : (listItems[i - 1] as Message).senderId;
+          // We only show the image if this is chat group, the message is not mine
+          // and the previous message was not from the same sender.
           const shouldShowImage =
             chat.isGroup &&
             message.senderId !== profile?.id &&
-            !(i > 0 && prevMessageSenderId === message.senderId);
+            !(prevMessageSenderId === message.senderId);
           return (
             <OneMessage
               key={message.id}
