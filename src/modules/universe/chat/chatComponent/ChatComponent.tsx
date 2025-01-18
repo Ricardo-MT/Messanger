@@ -6,7 +6,7 @@ import { universeState } from "../../universeSlice";
 import { useChatCompose } from "./useChatCompose";
 import { ChatPicture } from "../components/ChatPicture";
 import { BiChevronLeft, BiSend } from "react-icons/bi";
-import { useMemo, useRef } from "react";
+import { CSSProperties, useMemo, useRef } from "react";
 import { Profile } from "../../../../interfaces/profile";
 
 type Props = {
@@ -84,10 +84,14 @@ export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
             message.senderId === profile?.id
               ? profile!
               : chat.members.find((member) => member.id === message.senderId)!;
+          const prevMessageSenderId =
+            typeof listItems[i - 1] === "string"
+              ? null
+              : (listItems[i - 1] as Message).senderId;
           const shouldShowImage =
             chat.isGroup &&
             message.senderId !== profile?.id &&
-            !(i > 0 && listItems[i - 1].senderId === message.senderId);
+            !(i > 0 && prevMessageSenderId === message.senderId);
           return (
             <OneMessage
               key={message.id}
@@ -148,9 +152,11 @@ export const OneMessage = ({
       <span
         className={`messageProfileImage ${css.messageProfileImage}`}
         data-profile-image={(shouldShowImage && profile.avatar) || ""}
-        style={{
-          "--profile-image": `url(${profile.avatar})`,
-        }}
+        style={
+          {
+            "--profile-image": `url(${profile.avatar})`,
+          } as CSSProperties
+        }
       ></span>
       <div className={`messageContent ${css.messageContent}`}>
         <span>{message.text}</span>

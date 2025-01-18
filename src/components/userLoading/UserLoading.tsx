@@ -1,3 +1,4 @@
+import { CSSProperties } from "react";
 import { authState } from "../../contexts/authSlice";
 import { useAppSelector } from "../../store/storeHooks";
 import css from "./UserLoading.module.css";
@@ -16,7 +17,11 @@ export const UserLoading = () => {
               className={css.loadingSpinnerItem}
               data-spinning-index-item={index}
               data-spinning-total-items={totalItems}
-              style={{ "--animation-order": totalItems - index }}
+              style={
+                {
+                  "--animation-order": totalItems - index,
+                } as CSSProperties
+              }
             >
               <div className={css.loadingSpinnerItemInner} />
             </div>
