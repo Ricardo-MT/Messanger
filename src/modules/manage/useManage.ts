@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { authState } from "../../contexts/authSlice";
 import { useAppDispatch, useAppSelector } from "../../store/storeHooks";
-import { manageClientSlice } from "./manageClientSlice";
+import { manageUniversesSlice } from "./manageUniversesSlice";
 import { FirebaseError } from "firebase/app";
 import { doc, getDocs, query, where } from "firebase/firestore";
 import { firestoreDb } from "../../settings/firebaseApp";
@@ -9,7 +9,7 @@ import { collections, db } from "../../settings/collections";
 import { universeFromDoc } from "../../interfaces/universe";
 
 const { setUniverses, setUniverse, success, setError, startLoading } =
-  manageClientSlice.actions;
+  manageUniversesSlice.actions;
 
 export const useManage = () => {
   const { user } = useAppSelector(authState);

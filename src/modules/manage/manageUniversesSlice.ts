@@ -2,22 +2,22 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Universe } from "../../interfaces/universe";
 import { RootState } from "../../store/store";
 
-interface ClientState {
+interface ManageUniverses {
   universes: Universe[];
   universe?: Universe | null;
   loading: boolean;
   error: string;
 }
 
-const initialState: ClientState = {
+const initialState: ManageUniverses = {
   universe: null,
   universes: [],
   loading: true,
   error: "",
 };
 
-export const manageClientSlice = createSlice({
-  name: "manageClient",
+export const manageUniversesSlice = createSlice({
+  name: "manageUniverses",
   initialState,
   reducers: {
     setUniverse: (
@@ -43,4 +43,4 @@ export const manageClientSlice = createSlice({
   },
 });
 
-export const manageClientState = (state: RootState) => state.manageClient;
+export const manageUniversesState = (state: RootState) => state.manageUniverses;

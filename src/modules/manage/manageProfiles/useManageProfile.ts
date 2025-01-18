@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../store/storeHooks";
-import { manageClientState } from "../manageClientSlice";
+import { manageUniversesState } from "../manageUniversesSlice";
 import { manageProfilesSlice } from "./manageProfilesSlice";
 import {
   doc,
@@ -20,7 +20,7 @@ const { setError, setProfiles, updateProfiles } = manageProfilesSlice.actions;
 
 export const useManageProfiles = () => {
   const dispatch = useAppDispatch();
-  const { universe } = useAppSelector(manageClientState);
+  const { universe } = useAppSelector(manageUniversesState);
 
   const listenToProfiles = async (universe: Universe) => {
     const universeRef = doc(firestoreDb, collections.UNIVERSE, universe.id);

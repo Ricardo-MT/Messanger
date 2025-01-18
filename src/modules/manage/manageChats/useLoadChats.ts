@@ -5,7 +5,7 @@ import { manageProfilesState } from "../manageProfiles/manageProfilesSlice";
 import date from "date-and-time";
 import { ChatService } from "../../../services/chat";
 import { MessageService } from "../../../services/message";
-import { manageClientState } from "../manageClientSlice";
+import { manageUniversesState } from "../manageUniversesSlice";
 
 type ParsedData = {
   metadata: {
@@ -26,7 +26,7 @@ type Props = {
 };
 
 export const useLoadChats = ({ chatService, messageService }: Props) => {
-  const { universe } = useAppSelector(manageClientState);
+  const { universe } = useAppSelector(manageUniversesState);
   const { profiles } = useAppSelector(manageProfilesState);
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
   const [loading, setLoading] = useState(false);

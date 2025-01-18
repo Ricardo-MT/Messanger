@@ -19,3 +19,20 @@ export const profileFromDoc = (id: string, data: DocumentData): Profile => {
     id,
   } as Profile;
 };
+
+export const getProfileAvatarStoragePath = (
+  universeId: string,
+  profileId: string
+) => {
+  if (!universeId) {
+    throw new Error(
+      "Universe id is required to get profile avatar storage path"
+    );
+  }
+  if (!profileId) {
+    throw new Error(
+      "Profile id is required to get profile avatar storage path"
+    );
+  }
+  return `universes/${universeId}/profiles/${profileId}/avatar.jpg`;
+};

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { servicesCollection } from "../../services/servicesCollection";
 import { ROUTE_NAMES } from "../../settings/routes";
 import { useAppSelector } from "../../store/storeHooks";
-import { manageClientState } from "./manageClientSlice";
+import { manageUniversesState } from "./manageUniversesSlice";
 import { useManageProfiles } from "./manageProfiles/useManageProfile";
 import css from "./manage.module.css";
 
@@ -15,7 +15,7 @@ export const ManageLayout = () => {
   useManage();
   useManageProfiles();
   const { error, loading, universes, universe } =
-    useAppSelector(manageClientState);
+    useAppSelector(manageUniversesState);
   return (
     <div className={css.container}>
       <div className={css.navigator}>

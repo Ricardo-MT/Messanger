@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAppSelector } from "../../../../store/storeHooks";
-import { manageClientState } from "../../manageClientSlice";
+import { manageUniversesState } from "../../manageUniversesSlice";
 import { FirebaseError } from "firebase/app";
 import { addDoc, doc, setDoc } from "firebase/firestore";
 import { collections, db } from "../../../../settings/collections";
 import { firestoreDb, storageApp } from "../../../../settings/firebaseApp";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { getProfileAvatarStoragePath } from "../../../../interfaces/profile";
 
 type CreateProfile = {
   alias: string;
@@ -20,7 +21,7 @@ const initialState: CreateProfile = {
 };
 
 export const useCreateProfile = () => {
-  const { universe } = useAppSelector(manageClientState);
+  const { universe } = useAppSelector(manageUniversesState);
   const [profile, setProfile] = useState<CreateProfile>(initialState);
   const [avatarPreview, setAvatarPreview] = useState<string | undefined>(
     undefined
@@ -47,7 +48,7 @@ export const useCreateProfile = () => {
         updatedAt: now,
       });
       if (profile.avatar) {
-        const path = `${universe?.clientId}/${universe?.id}/profiles/${res.id}/avatar.jpg`;
+        const path = getProfileAvatarStoragePath(universe.id, res.id);
         const avatarRef = ref(storageApp, path);
         const imageRes = await uploadBytes(avatarRef, profile.avatar);
         const avatarUrl = await getDownloadURL(imageRes.ref);
