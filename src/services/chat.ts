@@ -38,7 +38,9 @@ const addImageToChat = async (chat: Chat, imageBuffer: Buffer) => {
     storageApp,
     getChatImageStoragePath(chat.universeId, chat.id)
   );
-  const imageRes = await uploadBytes(chatImageRef, imageBuffer);
+  const imageRes = await uploadBytes(chatImageRef, imageBuffer, {
+    contentType: "image/jpeg",
+  });
   const imageUrl = await getDownloadURL(imageRes.ref);
   await setDoc(
     chatRef,

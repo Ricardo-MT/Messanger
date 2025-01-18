@@ -19,6 +19,7 @@ type ParsedData = {
   chatMessages: {
     profileId: string;
     message: string;
+    imageBuffer?: Buffer;
     timestamp: Date;
   }[];
 };
@@ -92,7 +93,7 @@ export const useLoadChats = ({ chatService, messageService }: Props) => {
           // const chatHeader = fileContent[3];
           const chatMessagesStartIndex = 4;
           let chatMessagesEndIndex = fileContent.findIndex(
-            (line, i) => i >= 4 && line.length !== 3
+            (line, i) => i >= 4 && line.every((cell) => !cell)
           );
           if (chatMessagesEndIndex === -1) {
             chatMessagesEndIndex = fileContent.length;
@@ -101,8 +102,10 @@ export const useLoadChats = ({ chatService, messageService }: Props) => {
             chatMessagesStartIndex,
             chatMessagesEndIndex
           );
-          const metadata = await validateMetadata(rawMetadata, profiles);
-          const chatMessages = validateChats(rawChatMessages, profiles);
+          const [metadata, chatMessages] = await Promise.all([
+            validateMetadata(rawMetadata, profiles),
+            validateMessages(rawChatMessages, profiles),
+          ]);
           resolve({
             metadata,
             chatMessages,
@@ -155,7 +158,7 @@ export const useLoadChats = ({ chatService, messageService }: Props) => {
         );
       }
       const newChat = await chatService.createChat({
-        universeId: universeId,
+        universeId,
         name: parsedData!.metadata.chatName,
         image: parsedData!.metadata.chatImageBuffer,
         isGroup: parsedData!.metadata.profileIds.length > 2,
@@ -165,8 +168,10 @@ export const useLoadChats = ({ chatService, messageService }: Props) => {
       await Promise.all(
         parsedData!.chatMessages.map((chatMessage) =>
           messageService.createMessage({
+            universeId,
             chatId: newChat.id,
             text: chatMessage.message,
+            image: chatMessage.imageBuffer,
             senderId: chatMessage.profileId,
             timestamp: chatMessage.timestamp,
           })
@@ -248,45 +253,67 @@ const validateMetadata = async (
   return { profileIds, profileCreatorId, chatName, chatImageBuffer };
 };
 
-const validateChats = (
-  chats: string[][],
+const validateMessages = async (
+  messages: string[][],
   existingProfiles: Profile[]
-): {
-  profileId: string;
-  message: string;
-  timestamp: Date;
-}[] => {
+): Promise<
+  Array<{
+    profileId: string;
+    message: string;
+    imageBuffer?: Buffer;
+    timestamp: Date;
+  }>
+> => {
   const existingProfileMap = new Map(
     existingProfiles.map((profile) => [profile.alias, profile])
   );
   let lastAlias = "";
-  const chatMessages = [];
-  for (const chat of chats) {
-    const [alias, message, timestamp] = chat;
-    if (alias) {
-      lastAlias = alias;
-    }
-    if (!lastAlias) {
-      throw new Error("Alias es obligatorio");
-    }
-    if (!existingProfileMap.has(lastAlias)) {
-      throw new Error(`Perfil con alias ${lastAlias} no encontrado`);
-    }
-    if (!message) {
-      throw new Error("Texto de mensaje es obligatorio");
-    }
-    if (!timestamp) {
-      throw new Error("Timestamp es obligatorio");
-    }
-    const timestampDate = date.parse(timestamp, "DD/MM/YYYY HH:mm:ss", true);
-    if (isNaN(timestampDate.getTime())) {
-      throw new Error("Timestamp inválido");
-    }
-    chatMessages.push({
-      profileId: existingProfileMap.get(lastAlias)!.id,
-      message,
-      timestamp: timestampDate,
-    });
-  }
+  const chatMessages = await Promise.all(
+    messages.map(async (message) => {
+      const [alias, text, timestamp, imageUrl] = message;
+      if (alias) {
+        lastAlias = alias;
+      }
+      if (!lastAlias) {
+        throw new Error("Alias es obligatorio");
+      }
+      if (!existingProfileMap.has(lastAlias)) {
+        throw new Error(`Perfil con alias ${lastAlias} no encontrado`);
+      }
+      if (!text) {
+        throw new Error("Texto de mensaje es obligatorio");
+      }
+      if (!timestamp) {
+        throw new Error("Timestamp es obligatorio");
+      }
+      const timestampDate = date.parse(timestamp, "DD/MM/YYYY HH:mm:ss", true);
+      if (isNaN(timestampDate.getTime())) {
+        throw new Error("Timestamp inválido");
+      }
+      let imageBuffer: Buffer | undefined;
+      if (imageUrl) {
+        try {
+          const imageUrlObj = new URL(imageUrl);
+          // Fetch the image to store it in storage
+          const imageResponse = await axios.get(imageUrlObj.toString(), {
+            responseType: "arraybuffer",
+          });
+          if (!Buffer.isBuffer(Buffer.from(imageResponse.data))) {
+            throw new Error("URL no apunta a una imagen válida");
+          }
+          imageBuffer = imageResponse.data;
+        } catch (error) {
+          console.error(error);
+          throw new Error("URL de imagen de mensaje inválida");
+        }
+      }
+      return {
+        profileId: existingProfileMap.get(lastAlias)!.id,
+        message: text,
+        imageBuffer,
+        timestamp: timestampDate,
+      };
+    })
+  );
   return chatMessages;
 };

@@ -1,3 +1,4 @@
+import { MouseEvent } from "react";
 import { Message } from "../../../../interfaces/message";
 import { Chat } from "../../../../interfaces/chat";
 import css from "../chat.module.css";
@@ -6,7 +7,7 @@ import { universeState } from "../../universeSlice";
 import { useChatCompose } from "./useChatCompose";
 import { ChatPicture } from "../components/ChatPicture";
 import { BiChevronLeft, BiSend } from "react-icons/bi";
-import { CSSProperties, useMemo, useRef } from "react";
+import { CSSProperties, useMemo, useRef, useState } from "react";
 import { Profile } from "../../../../interfaces/profile";
 
 type Props = {
@@ -17,8 +18,10 @@ type Props = {
 
 export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
   const { profile } = useAppSelector(universeState);
+  const [fullScreenImage, setFullScreenImage] = useState<string | undefined>();
   const { text, setText, submit } = useChatCompose();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
   const listItems: (Message | string)[] = useMemo(() => {
     const items: (Message | string)[] = [];
     let lastDate = messages[0]?.timestamp.toDateString() ?? "";
@@ -97,6 +100,12 @@ export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
           return (
             <OneMessage
               key={message.id}
+              onImageClick={(e) => {
+                e.stopPropagation();
+                if (message.image) {
+                  setFullScreenImage(message.image);
+                }
+              }}
               message={message}
               mine={message.senderId === profile?.id}
               profile={thisProfile}
@@ -130,6 +139,14 @@ export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
           />
         </span>
       </form>
+      {fullScreenImage && (
+        <div
+          className={`${css.fullScreenImage} fullScreenImage`}
+          onClick={() => setFullScreenImage(undefined)}
+        >
+          <img src={fullScreenImage} alt="fullScreenImage" />
+        </div>
+      )}
     </>
   );
 };
@@ -139,11 +156,13 @@ export const OneMessage = ({
   mine,
   profile,
   shouldShowImage,
+  onImageClick,
 }: {
   message: Message;
   mine: boolean;
   profile: Profile;
   shouldShowImage?: boolean;
+  onImageClick: (e: MouseEvent) => void;
 }) => {
   return (
     <div
@@ -161,6 +180,14 @@ export const OneMessage = ({
         }
       ></span>
       <div className={`messageContent ${css.messageContent}`}>
+        {message.image && (
+          <img
+            src={message.image}
+            alt="message"
+            className={`messageImage ${css.messageImage}`}
+            onClick={onImageClick}
+          />
+        )}
         <span>{message.text}</span>
         <span className="timestamp">
           {message.timestamp.toLocaleTimeString().substring(0, 5)}
