@@ -18,6 +18,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 function viewportHandler(event: Event) {
   const viewport = event.target as VisualViewport;
   const html = document.documentElement;
+  console.log(viewport);
+
   const h = viewport.height;
   html.style.height = `calc(${h}px)`;
   html.style.setProperty("--vh", `${h / 100}px`);
