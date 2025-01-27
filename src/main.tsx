@@ -18,10 +18,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 function viewportHandler(event: Event) {
   const viewport = event.target as VisualViewport;
   const html = document.documentElement;
-  console.log(viewport);
 
   const h = viewport.height;
-  html.style.height = `calc(${h}px)`;
+  html.style.height = `calc(${h}px + 0)`;
   html.style.setProperty("--vh", `${h / 100}px`);
   window.scroll(0, 0);
 }
