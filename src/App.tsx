@@ -16,7 +16,9 @@ import { ManageProfilesPage } from "./modules/manage/manageProfiles/page.tsx";
 import { servicesCollection } from "./services/servicesCollection.ts";
 import { ManageLayout } from "./modules/manage/layout.tsx";
 import { ManageChatsPage } from "./modules/manage/manageChats/page.tsx";
-import { UserLoading } from "./components/userLoading/UserLoading.tsx";
+import { useAppSelector } from "./store/storeHooks.ts";
+import { authState } from "./contexts/authSlice.ts";
+import { LoadingComponent } from "./components/loadingComponent/LoadingComponent.tsx";
 
 function App() {
   return (
@@ -55,7 +57,7 @@ function App() {
               <Route path={ROUTE_NAMES.NOT_FOUND} element={<NotFoundPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
-            <UserLoading />
+            <AppGlobalLoading />
           </AuthProvider>
         </BrowserRouter>
       </Provider>
@@ -65,3 +67,8 @@ function App() {
 }
 
 export default App;
+
+export const AppGlobalLoading = () => {
+  const userState = useAppSelector(authState);
+  return userState.loading && <LoadingComponent />;
+};

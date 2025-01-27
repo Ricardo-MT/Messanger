@@ -129,6 +129,11 @@ button:focus-visible {
   background-color: var(--background);
 }
 
+.appBrandName::after {
+  content: 'WeChat';
+  color: var(--primary);
+}
+
 .chatListItem {
   border-bottom: 1px solid var(--divider);
 }

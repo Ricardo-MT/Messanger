@@ -156,7 +156,9 @@ export const useChat = () => {
           fetchLastMessagesFromChats(addedChats);
         }
       });
-      dispatch(success());
+      setTimeout(() => {
+        dispatch(success());
+      }, 500);
       return () => {
         suscriberToChats();
       };

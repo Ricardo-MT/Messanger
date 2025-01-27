@@ -19,7 +19,7 @@ export const HomePage = () => {
       >
         CERRAR SESIÓN
       </button>
-      <h1>Messanger</h1>
+      <h1>WeChat</h1>
       <h3>{user?.email}</h3>
       <Link to={ROUTE_NAMES.MANAGE}>Administra tus universos</Link>
       <h2>Tus universos</h2>

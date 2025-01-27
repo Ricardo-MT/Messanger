@@ -18,8 +18,8 @@ export default defineConfig({
       },
 
       manifest: {
-        name: "Messanger",
-        short_name: "Messanger",
+        name: "WeChat",
+        short_name: "WeChat",
         description: "A chat app",
         theme_color: "#ffffff",
         display: "standalone",
