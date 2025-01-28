@@ -10,8 +10,10 @@ import { firebaseConfig } from "./settings/firebaseConfig.ts";
 const app = initializeApp(firebaseConfig);
 getAnalytics(app);
 const T = window.visualViewport!.height;
+const root = document.getElementById("root")!;
+root.setAttribute("data-is-fullscreen", "1");
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+ReactDOM.createRoot(root).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
@@ -24,8 +26,7 @@ function viewportHandler(event: Event) {
   const h = viewport.height;
 
   container.style.height = `${h}px`;
-  const isFullscreen = h === T;
-  console.log("isFullscreen", isFullscreen, h, T);
+  const isFullscreen = h >= T;
 
   container.setAttribute("data-is-fullscreen", isFullscreen ? "1" : "0");
   window.scroll(0, 0);
