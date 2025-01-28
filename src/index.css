@@ -82,7 +82,7 @@ html, body {
   background-color: var(--background);
 }
 
-html:has(body.ios) {
+html:has(body.ios), body.ios, body.ios #root {
   transition: height 0.2s;
 }
 
@@ -119,11 +119,6 @@ body {
   width: 100%;
   display: inline-flex;
   flex-direction: column;
-  transition: height 0.2s;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
 }
 
 #root[data-is-fullscreen='0'] {
