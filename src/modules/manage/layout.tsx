@@ -1,5 +1,4 @@
 import { Link, NavLink, Outlet } from "react-router";
-import { useManage } from "./useManage";
 import { useEffect } from "react";
 import { servicesCollection } from "../../services/servicesCollection";
 import { ROUTE_NAMES } from "../../settings/routes";
@@ -12,7 +11,6 @@ export const ManageLayout = () => {
   useEffect(() => {
     servicesCollection.preferences.setLastModuleVisited("manage");
   }, []);
-  useManage();
   useManageProfiles();
   const { error, loading, universes, universe } =
     useAppSelector(manageUniversesState);
