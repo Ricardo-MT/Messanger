@@ -12,14 +12,14 @@ export const ChatPage = () => {
   const { selectChat } = useChatControllers();
   const chatComponentRef = useRef<HTMLDivElement>(null);
   const onGoBack = () => {
-    chatComponentRef.current?.classList.remove(css.chatActive);
+    chatComponentRef.current?.classList.remove(css.chatActive, "chatActive");
     setTimeout(() => {
       selectChat(null);
     }, 300);
   };
   useEffect(() => {
     if (chat) {
-      chatComponentRef.current?.classList.add(css.chatActive);
+      chatComponentRef.current?.classList.add(css.chatActive, "chatActive");
     }
   }, [chat]);
   return (

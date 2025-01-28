@@ -47,6 +47,14 @@ export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
     return chat.members.find((member) => member.id !== profile?.id)?.name ?? "";
   }, [chat, profile]);
 
+  const lastSeenTimestamp = useMemo(() => {
+    if (!chat || !messages.length) {
+      return new Date();
+    }
+    const lastMessage = messages[0];
+    return lastMessage?.timestamp;
+  }, [chat?.id]);
+
   if (!chat) {
     return <div>Selecciona un chat</div>;
   }
@@ -71,7 +79,11 @@ export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
         <ChatPicture chat={chat} currentUserId={profile!.id} />
         {chatTitle}
       </div>
-      <div className={`${css.chatBody} ${chat.isGroup ? css.chatBody : ""}`}>
+      <div
+        className={`${css.chatBody} ${
+          chat.isGroup ? css.chatBody : ""
+        } chatBody`}
+      >
         {listItems.map((message, i) => {
           if (typeof message === "string") {
             return (
@@ -110,6 +122,7 @@ export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
               mine={message.senderId === profile?.id}
               profile={thisProfile}
               shouldShowImage={shouldShowImage}
+              shouldAnimate={message.timestamp > lastSeenTimestamp}
             />
           );
         })}
@@ -157,16 +170,20 @@ export const OneMessage = ({
   profile,
   shouldShowImage,
   onImageClick,
+  shouldAnimate,
 }: {
   message: Message;
   mine: boolean;
   profile: Profile;
   shouldShowImage?: boolean;
   onImageClick: (e: MouseEvent) => void;
+  shouldAnimate: boolean;
 }) => {
   return (
     <div
       className={`messageContainer ${css.messageContainer} ${
+        shouldAnimate ? css.shouldAnimate : ""
+      } ${
         mine ? `myMessage ` + css.myMessage : `otherMessage ` + css.otherMessage
       }`}
     >

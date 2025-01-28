@@ -30,11 +30,18 @@
     .container {
         flex-direction: column-reverse;
     }
+    .container, .nav {
+        transition: max-height .2s, padding .2s;
+    }
     .nav {
         flex-direction: row;
         width: auto;
     }
     .nav > * {
         flex: 1;
+    }
+    .container:has([class*='chatContent'][class*='chatActive']) .nav {
+        padding: 0;
+        max-height: 0;
     }
 }
