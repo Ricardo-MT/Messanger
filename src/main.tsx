@@ -24,7 +24,10 @@ function viewportHandler(event: Event) {
   const h = viewport.height;
 
   container.style.height = `${h}px`;
-  container.setAttribute("data-is-fullscreen", h === T ? "1" : "0");
+  const isFullscreen = h === T;
+  console.log("isFullscreen", isFullscreen, h, T);
+
+  container.setAttribute("data-is-fullscreen", isFullscreen ? "1" : "0");
   window.scroll(0, 0);
 }
 
