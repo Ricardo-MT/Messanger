@@ -9,6 +9,7 @@ import { firebaseConfig } from "./settings/firebaseConfig.ts";
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 getAnalytics(app);
+const T = window.visualViewport!.height;
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -17,11 +18,13 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 );
 function viewportHandler(event: Event) {
   const viewport = event.target as VisualViewport;
-  const html = document.documentElement;
+  // const container = document.documentElement;
+  const container = document.querySelector("#root") as HTMLElement;
 
   const h = viewport.height;
-  html.style.height = `calc(${h}px + 0)`;
-  html.style.setProperty("--vh", `${h / 100}px`);
+
+  container.style.height = `${h}px`;
+  container.setAttribute("data-is-fullscreen", h === T ? "1" : "0");
   window.scroll(0, 0);
 }
 

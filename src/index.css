@@ -33,76 +33,6 @@
   --chat-content-background-image: url(/chat-background-dark.png);
 }
 
-* {
-  /* box-sizing: border-box; */
-}
-
-html {
-  height: calc(100vh);
-  overflow: hidden;
-  overscroll-behavior: none;
-  box-sizing: border-box;
-}
-
-html:has(body.ios) {
-  transition: height 0.2s;
-}
-
-a {
-  font-weight: 500;
-  color: var(--nav-item-inactive);
-  text-decoration: inherit;
-  transition: color 0.25s;
-}
-a:hover, a.active {
-  color: var(--primary);
-}
-
-body {
-  margin: 0;
-  place-items: center;
-  height: 100%;
-  min-height: 100%;
-  max-height: 100%;
-  overflow: hidden;
-  overscroll-behavior: none;
-  box-sizing: border-box;
-}
-
-#root {
-  overflow: hidden;
-  text-align: center;
-  /* height: calc(100% - env(safe-area-inset-top) - env(safe-area-inset-bottom)); */
-  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
-  box-sizing: border-box;
-  height: 100%;
-  width: 100%;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -129,6 +59,99 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+
+* {
+  /* box-sizing: border-box; */
+}
+
+html {
+  /* height: calc(100% + env(safe-area-inset-top) + env(safe-area-inset-bottom)); */
+  /* height: 100%; */
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  overscroll-behavior: none;
+  box-sizing: border-box;
+  display: inline-flex;
+  background-color: var(--background);
+}
+
+html, body {
+  background-color: var(--background);
+}
+
+html:has(body.ios) {
+  transition: height 0.2s;
+}
+
+a {
+  font-weight: 500;
+  color: var(--nav-item-inactive);
+  text-decoration: inherit;
+  transition: color 0.25s;
+}
+a:hover, a.active {
+  color: var(--primary);
+}
+
+body {
+  margin: 0;
+  place-items: center;
+  height: 100%;
+  width: 100%;
+  min-height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  box-sizing: border-box;
+}
+
+#root {
+  overflow: hidden;
+  overscroll-behavior: none;
+  text-align: center;
+  /* height: calc(100% - env(safe-area-inset-top) - env(safe-area-inset-bottom)); */
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  display: inline-flex;
+  flex-direction: column;
+  transition: height 0.2s;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+#root[data-is-fullscreen='0'] {
+  padding-bottom: 0;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
 }
 
 #root {
