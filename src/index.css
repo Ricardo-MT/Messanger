@@ -75,7 +75,6 @@ html {
   overscroll-behavior: none;
   box-sizing: border-box;
   display: inline-flex;
-  background-color: var(--background);
 }
 
 html, body {

@@ -10,7 +10,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview --host",
     "build-and-preview": "tsc && vite build && vite preview --host",
-    "generate-pwa-assets": "pwa-assets-generator --preset minimal-2023 public/logo-solid.png"
+    "generate-pwa-assets": "pwa-assets-generator -c pwa-assets-config.ts"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.0",

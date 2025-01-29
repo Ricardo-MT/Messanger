@@ -21,7 +21,7 @@ export default defineConfig({
         name: "WeChat",
         short_name: "WeChat",
         description: "A chat app",
-        theme_color: "#ffffff",
+        theme_color: "#f3f1e4",
         display: "standalone",
         orientation: "portrait",
       },
