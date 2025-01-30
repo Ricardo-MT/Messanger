@@ -24,6 +24,11 @@ export default defineConfig({
         background_color: "#f3f1e4",
         display: "standalone",
         orientation: "portrait",
+        launch_handler: {
+          client_mode: ["navigate-existing", "auto"],
+        },
+        dir: "ltr",
+        lang: "es",
       },
 
       workbox: {
