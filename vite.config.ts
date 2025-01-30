@@ -22,7 +22,7 @@ export default defineConfig({
         description: "A chat app",
         theme_color: "#f3f1e4",
         background_color: "#f3f1e4",
-        display: "standalone",
+        display: "fullscreen",
         orientation: "portrait",
         launch_handler: {
           client_mode: ["navigate-existing", "auto"],
