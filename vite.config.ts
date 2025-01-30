@@ -9,9 +9,8 @@ export default defineConfig({
     react(),
     checker({ typescript: true }),
     VitePWA({
-      registerType: "prompt",
+      registerType: "autoUpdate",
       injectRegister: false,
-
       pwaAssets: {
         disabled: false,
         config: true,
@@ -22,6 +21,7 @@ export default defineConfig({
         short_name: "WeChat",
         description: "A chat app",
         theme_color: "#f3f1e4",
+        background_color: "#f3f1e4",
         display: "standalone",
         orientation: "portrait",
       },
