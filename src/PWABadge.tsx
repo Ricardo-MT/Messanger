@@ -3,15 +3,14 @@ import "./PWABadge.css";
 import { useRegisterSW } from "virtual:pwa-register/react";
 
 function PWABadge() {
-  // check for updates every 48 hours
-  const period = 48 * 60 * 60 * 1000;
+  // check for updates every hour
+  const period = 60 * 60 * 1000;
 
   const {
     offlineReady: [offlineReady, setOfflineReady],
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
   } = useRegisterSW({
-    immediate: true,
     onRegisteredSW(swUrl, r) {
       if (period <= 0) return;
       if (r?.active?.state === "activated") {

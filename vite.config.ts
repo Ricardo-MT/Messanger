@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     checker({ typescript: true }),
     VitePWA({
-      registerType: "autoUpdate",
+      registerType: "prompt",
       injectRegister: false,
       pwaAssets: {
         disabled: false,
