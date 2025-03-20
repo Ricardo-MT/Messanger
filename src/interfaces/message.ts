@@ -3,7 +3,10 @@ import { DocumentData } from "firebase/firestore";
 export interface Message {
   id: string;
   chatId: string;
-  readByAll: boolean;
+  seenByAll: boolean;
+  seenBy: { [key: string]: boolean };
+  deliveredToAll: boolean;
+  deliveredTo: { [key: string]: boolean };
   text: string;
   image?: string;
   timestamp: Date;

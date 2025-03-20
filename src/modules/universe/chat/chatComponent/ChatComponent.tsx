@@ -9,6 +9,9 @@ import { ChatPicture } from "../components/ChatPicture";
 import { BiChevronLeft, BiSend } from "react-icons/bi";
 import { CSSProperties, useMemo, useRef, useState } from "react";
 import { Profile } from "../../../../interfaces/profile";
+import { SeenStatus } from "./SeenStatus";
+import { useChatComponent } from "./useChatComponent";
+import { servicesCollection } from "../../../../services/servicesCollection";
 
 type Props = {
   chat?: Chat | null;
@@ -19,7 +22,7 @@ type Props = {
 export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
   const { profile } = useAppSelector(universeState);
   const [fullScreenImage, setFullScreenImage] = useState<string | undefined>();
-  const { text, setText, submit } = useChatCompose();
+  const { text, setText, submit } = useChatCompose(servicesCollection.message);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const listItems: (Message | string)[] = useMemo(() => {
@@ -179,6 +182,7 @@ export const OneMessage = ({
   onImageClick: (e: MouseEvent) => void;
   shouldAnimate: boolean;
 }) => {
+  useChatComponent({ message, messageService: servicesCollection.message });
   return (
     <div
       className={`messageContainer ${css.messageContainer} ${
@@ -206,9 +210,12 @@ export const OneMessage = ({
           />
         )}
         <span>{message.text}</span>
-        <span className="timestamp">
-          {message.timestamp.toLocaleTimeString().substring(0, 5)}
-        </span>
+        <div className={`${css.messageFooter} messageFooter`}>
+          <span className="timestamp">
+            {message.timestamp.toLocaleTimeString().substring(0, 5)}
+          </span>
+          {mine && <SeenStatus message={message} />}
+        </div>
       </div>
     </div>
   );

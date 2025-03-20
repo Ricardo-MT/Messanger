@@ -24,6 +24,9 @@
   --timestamp-on-chat-list-item: #637077;
   --message-mine: var(--primary);
   --timestamp-on-message-mine: #b9b9b9;
+  --message-seen-status-sent: var(--timestamp-on-message-mine);
+  --message-seen-status-delivered: var(--message-seen-status-sent);
+  --message-seen-status-seen: #5baff3;
   --message-other: #202c33;
   --timestamp-on-message-other: #697379;
   /* --header-and-footer-background: #1d2a31; */
@@ -217,4 +220,32 @@ button:focus-visible {
 
 .messageContainer.otherMessage .messageContent .timestamp {
   color: var(--timestamp-on-message-other);
+}
+
+[data-message-seen-status] {
+  height: 100%;
+  width: 1.5em;
+  background-size: contain;
+  background-position: center;
+  display: inline-block;
+  transition: background-color 0.5s;
+}
+
+[data-message-seen-status="sent"] {
+  background-color: var(--timestamp-on-message-mine);
+  mask-image: url(/icons/sent.svg);
+  -webkit-mask-image: url(/icons/sent.svg);
+
+}
+
+[data-message-seen-status="delivered"] {
+  background-color: var(--message-seen-status-delivered);
+  mask-image: url(/icons/delivered.svg);
+  -webkit-mask-image: url(/icons/delivered.svg);
+}
+
+[data-message-seen-status="seen"] {
+  background-color: var(--message-seen-status-seen);
+  mask-image: url(/icons/seen.svg);
+  -webkit-mask-image: url(/icons/delivered.svg);
 }

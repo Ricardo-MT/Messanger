@@ -1,13 +1,14 @@
 import { FirebaseError } from "firebase/app";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { doc, addDoc, Timestamp } from "firebase/firestore";
+// import { doc, addDoc, Timestamp } from "firebase/firestore";
 import { useAppSelector } from "../../../../store/storeHooks";
 import { universeState } from "../../universeSlice";
-import { collections, db } from "../../../../settings/collections";
-import { firestoreDb } from "../../../../settings/firebaseApp";
+// import { collections, db } from "../../../../settings/collections";
+// import { firestoreDb } from "../../../../settings/firebaseApp";
 import { chatState } from "../chatSlice";
+import { MessageService } from "../../../../services/message";
 
-export const useChatCompose = () => {
+export const useChatCompose = (messageService: MessageService) => {
   const { profile } = useAppSelector(universeState);
   const { chat } = useAppSelector(chatState);
   const [text, setText] = useState("");
@@ -22,14 +23,13 @@ export const useChatCompose = () => {
     try {
       setText("");
       setError("");
-      const profileRef = doc(firestoreDb, collections.PROFILE, profile.id);
-      const chatRef = doc(firestoreDb, collections.CHAT, chat.id);
-      await addDoc(db.message, {
+      await messageService.createMessage({
+        universeId: profile.universeId,
+        chatId: chat.id,
         text,
-        readByAll: false,
-        senderId: profileRef,
-        chatId: chatRef,
-        timestamp: Timestamp.now(),
+        senderId: profile.id,
+        timestamp: new Date(),
+        members: chat.members.map((member) => member.id),
       });
     } catch (e) {
       console.error(e);

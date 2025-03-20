@@ -9,7 +9,7 @@ import { useEffect } from "react";
 
 export const UniverseLayout = () => {
   const { cleanup: universeCleanup } = useUniverse();
-  const chatCleanup = useChat();
+  const chatCleanup = useChat(servicesCollection.message);
   useEffect(() => {
     servicesCollection.preferences.setLastModuleVisited("app");
     return () => {

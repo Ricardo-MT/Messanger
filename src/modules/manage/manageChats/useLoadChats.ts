@@ -167,13 +167,14 @@ export const useLoadChats = ({ chatService, messageService }: Props) => {
       });
       await Promise.all(
         parsedData!.chatMessages.map((chatMessage) =>
-          messageService.createMessage({
+          messageService.createMessageFromManage({
             universeId,
             chatId: newChat.id,
             text: chatMessage.message,
             image: chatMessage.imageBuffer,
             senderId: chatMessage.profileId,
             timestamp: chatMessage.timestamp,
+            members: parsedData.metadata.profileIds,
           })
         )
       );

@@ -235,6 +235,13 @@
   border-bottom-left-radius: 0 !important;
 }
 
+.messageContent .messageFooter {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: .2rem;
+}
+
 .chatBody .messageContainer.otherMessage .messageProfileImage {
   display: inline-block;
   width: 1.8rem;

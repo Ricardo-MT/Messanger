@@ -5,6 +5,7 @@ import {
   where,
   deleteDoc,
   addDoc,
+  updateDoc,
   Timestamp,
   getDoc,
   setDoc,
@@ -27,7 +28,22 @@ export interface MessageService {
     image?: Buffer;
     senderId: string;
     timestamp: Date;
+    members: string[];
   }) => Promise<Message>;
+  createMessageFromManage: (message: {
+    universeId: string;
+    chatId: string;
+    text: string;
+    image?: Buffer;
+    senderId: string;
+    timestamp: Date;
+    members: string[];
+  }) => Promise<Message>;
+  deliveredMessageToMember: (
+    messageId: string,
+    memberId: string
+  ) => Promise<void>;
+  seenMessageByMember: (messageId: string, memberId: string) => Promise<void>;
 }
 
 const addImageToMessage = async ({
@@ -74,13 +90,25 @@ export const messageService = (): MessageService => ({
     image?: Buffer;
     senderId: string;
     timestamp: Date;
+    members: string[];
   }) => {
+    const deliveredTo: {
+      [key: string]: boolean;
+    } = {};
+    message.members.forEach((member) => {
+      deliveredTo[member] = false;
+    });
+    deliveredTo[message.senderId] = true;
+
     const chatRef = doc(firestoreDb, collections.CHAT, message.chatId);
     const senderRef = doc(firestoreDb, collections.PROFILE, message.senderId);
     const messageRef = await addDoc(db.message, {
       chatId: chatRef,
       text: message.text,
-      readByAll: false,
+      seenByAll: false,
+      seenBy: deliveredTo,
+      deliveredToAll: false,
+      deliveredTo,
       senderId: senderRef,
       timestamp: Timestamp.fromDate(message.timestamp),
     });
@@ -94,5 +122,72 @@ export const messageService = (): MessageService => ({
       });
     }
     return messageParsed;
+  },
+  createMessageFromManage: async (message: {
+    universeId: string;
+    chatId: string;
+    text: string;
+    image?: Buffer;
+    senderId: string;
+    timestamp: Date;
+    members: string[];
+  }) => {
+    const deliveredTo: {
+      [key: string]: boolean;
+    } = {};
+    message.members.forEach((member) => {
+      deliveredTo[member] = true;
+    });
+
+    const chatRef = doc(firestoreDb, collections.CHAT, message.chatId);
+    const senderRef = doc(firestoreDb, collections.PROFILE, message.senderId);
+    const messageRef = await addDoc(db.message, {
+      chatId: chatRef,
+      text: message.text,
+      seenByAll: true,
+      seenBy: deliveredTo,
+      deliveredToAll: true,
+      deliveredTo,
+      senderId: senderRef,
+      timestamp: Timestamp.fromDate(message.timestamp),
+    });
+    const messageDoc = await getDoc(messageRef);
+    const messageParsed = messageFromDoc(messageDoc.id, messageDoc.data()!);
+    if (message.image) {
+      await addImageToMessage({
+        universeId: message.universeId,
+        message: messageParsed,
+        imageBuffer: message.image,
+      });
+    }
+    return messageParsed;
+  },
+  deliveredMessageToMember: async (messageId: string, memberId: string) => {
+    const messageRef = doc(firestoreDb, collections.MESSAGE, messageId);
+    const messageDoc = await getDoc(messageRef);
+    const deliveredTo =
+      (messageDoc.data()!.deliveredTo as {
+        [key: string]: boolean;
+      }) ?? {};
+    deliveredTo[memberId] = true;
+    const deliveredToAll = Object.values(deliveredTo).every((value) => value);
+    await updateDoc(messageRef, {
+      [`deliveredTo.${memberId}`]: true,
+      deliveredToAll,
+    });
+  },
+  seenMessageByMember: async (messageId: string, memberId: string) => {
+    const messageRef = doc(firestoreDb, collections.MESSAGE, messageId);
+    const messageDoc = await getDoc(messageRef);
+    const seenBy =
+      (messageDoc.data()!.seenBy as {
+        [key: string]: boolean;
+      }) ?? {};
+    seenBy[memberId] = true;
+    const seenByAll = Object.values(seenBy).every((value) => value);
+    await updateDoc(messageRef, {
+      [`seenBy.${memberId}`]: true,
+      seenByAll,
+    });
   },
 });

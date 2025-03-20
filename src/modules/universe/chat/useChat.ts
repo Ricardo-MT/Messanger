@@ -17,6 +17,7 @@ import { Chat, chatFromDoc } from "../../../interfaces/chat";
 import { collections, db } from "../../../settings/collections";
 import { firestoreDb } from "../../../settings/firebaseApp";
 import { Message, messageFromDoc } from "../../../interfaces/message";
+import { MessageService } from "../../../services/message";
 
 const {
   updateMessages,
@@ -28,12 +29,12 @@ const {
   updateChatsUpgrade,
 } = chatSlice.actions;
 
-export const useChat = () => {
+export const useChat = (messageService: MessageService) => {
   const { profile } = useAppSelector(universeState);
   const dispatch = useAppDispatch();
 
   const listenToChats = useCallback(
-    async (chat: Chat, latestTimestamp: Date) => {
+    async (chat: Chat, latestTimestamp: Date, profileId: string) => {
       try {
         const chatRef = doc(firestoreDb, collections.CHAT, chat.id);
         const q = query(
@@ -57,6 +58,12 @@ export const useChat = () => {
               modify.push(messageFromDoc(change.doc.id, change.doc.data()));
             }
           }
+          for (const message of add) {
+            if (message.deliveredTo?.[profileId]) {
+              continue;
+            }
+            messageService.deliveredMessageToMember(message.id, profileId);
+          }
           dispatch(
             updateMessages({
               chatId: chat.id,
@@ -74,48 +81,60 @@ export const useChat = () => {
     [dispatch]
   );
 
-  const fetchLastMessagesFromChats = useCallback(async (chats: Chat[]) => {
-    const unsubscribeFromChats: Record<string, Unsubscribe | undefined> = {};
-    try {
-      await Promise.all(
-        chats.map(async (chat) => {
-          const chatRef = doc(firestoreDb, collections.CHAT, chat.id);
-          const q = query(
-            db.message,
-            where("chatId", "==", chatRef),
-            orderBy("timestamp", "desc"),
-            limit(30)
-          );
-          const docs = await getDocs(q);
-          const messages = await Promise.all(
-            docs.docs.map((doc) => messageFromDoc(doc.id, doc.data()))
-          );
-          dispatch(
-            attachMessages({
-              chatId: chat.id,
-              messages,
-            })
-          );
-          const lastTimestamp = messages[0]?.timestamp || new Date();
-          unsubscribeFromChats[chat.id] = await listenToChats(
-            chat,
-            lastTimestamp
-          );
-        })
-      );
-    } catch (error) {
-      console.error(error);
-      dispatch(setError((error as FirebaseError).message));
-    }
-    return () => {
-      Object.keys(unsubscribeFromChats).forEach((chatId) => {
-        const unsubscribe = unsubscribeFromChats[chatId];
-        if (unsubscribe) {
-          unsubscribe();
-        }
-      });
-    };
-  }, []);
+  const fetchLastMessagesFromChats = useCallback(
+    async (chats: Chat[], profileId: string) => {
+      const unsubscribeFromChats: Record<string, Unsubscribe | undefined> = {};
+      try {
+        await Promise.all(
+          chats.map(async (chat) => {
+            const chatRef = doc(firestoreDb, collections.CHAT, chat.id);
+            const q = query(
+              db.message,
+              where("chatId", "==", chatRef),
+              orderBy("timestamp", "desc"),
+              limit(30)
+            );
+            const docs = await getDocs(q);
+            const messages = await Promise.all(
+              docs.docs.map((doc) => messageFromDoc(doc.id, doc.data()))
+            );
+            dispatch(
+              attachMessages({
+                chatId: chat.id,
+                messages,
+              })
+            );
+            setTimeout(() => {
+              messages.forEach((message) => {
+                if (message.deliveredTo?.[profileId]) {
+                  return;
+                }
+                messageService.deliveredMessageToMember(message.id, profileId);
+              });
+            }, 0);
+            const lastTimestamp = messages[0]?.timestamp || new Date();
+            unsubscribeFromChats[chat.id] = await listenToChats(
+              chat,
+              lastTimestamp,
+              profileId
+            );
+          })
+        );
+      } catch (error) {
+        console.error(error);
+        dispatch(setError((error as FirebaseError).message));
+      }
+      return () => {
+        Object.keys(unsubscribeFromChats).forEach((chatId) => {
+          const unsubscribe = unsubscribeFromChats[chatId];
+          if (unsubscribe) {
+            unsubscribe();
+          }
+        });
+      };
+    },
+    []
+  );
 
   const fetchChatsByProfile = useCallback(async (profileId: string) => {
     try {
@@ -153,7 +172,7 @@ export const useChat = () => {
           })
         );
         if (addedChats.length) {
-          fetchLastMessagesFromChats(addedChats);
+          fetchLastMessagesFromChats(addedChats, profileId);
         }
       });
       setTimeout(() => {
