@@ -1,0 +1,41 @@
+:root {
+  --space-between-options: 0.1rem;
+}
+
+.backgroundPanel {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  background-color: var(--background-traslucent);
+}
+
+.contextMenuOptionsContainer {
+  position: absolute;
+  right: 10px;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-between-options);
+  border-radius: 8px;
+  background-color: var(--background-accent);
+}
+
+.contextMenuOption {
+  padding: 0.6rem 0.8rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.contextMenuOption:not(:last-child) {
+  border-bottom: var(--space-between-options) solid var(--background);
+}

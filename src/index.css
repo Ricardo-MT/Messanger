@@ -17,6 +17,7 @@
   --background-accent: #202c33;
   --on-background-accent: #f1f1f1;
   --background-accent-secondary: #3d4b54;
+  --background-traslucent: rgba(0, 0, 0, .5);
   --primary: #0a7b66;
   --nav-item-active: var(--primary);
   --nav-item-inactive: #546169;
@@ -34,6 +35,8 @@
   --on-header-and-footer-background: #f1f1f1;
   --textinput-background: #3d4b54;
   --chat-content-background-image: url(/chat-background-dark.png);
+
+  --error: #d04b66;
 }
 
 @media (prefers-color-scheme: light) {

@@ -1,4 +1,3 @@
-import { MouseEvent } from "react";
 import { Message } from "../../../../interfaces/message";
 import { Chat } from "../../../../interfaces/chat";
 import css from "../chat.module.css";
@@ -6,12 +5,22 @@ import { useAppSelector } from "../../../../store/storeHooks";
 import { universeState } from "../../universeSlice";
 import { useChatCompose } from "./useChatCompose";
 import { ChatPicture } from "../components/ChatPicture";
-import { BiChevronLeft, BiSend } from "react-icons/bi";
-import { CSSProperties, useMemo, useRef, useState } from "react";
-import { Profile } from "../../../../interfaces/profile";
-import { SeenStatus } from "./SeenStatus";
-import { useChatComponent } from "./useChatComponent";
+import {
+  BiChevronLeft,
+  BiSend,
+  BiSolidTrash,
+  BiTrashAlt,
+  BiReply,
+  BiReplyAll,
+  BiCopy,
+  BiEdit,
+  BiWorld,
+  BiPin,
+} from "react-icons/bi";
 import { servicesCollection } from "../../../../services/servicesCollection";
+import { useChatComponent } from "./useChatComponent";
+import { ContextMenu } from "../../../../components/contextMenu/ContextMenu";
+import { OneMessage } from "./OneMessage";
 
 type Props = {
   chat?: Chat | null;
@@ -21,42 +30,15 @@ type Props = {
 
 export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
   const { profile } = useAppSelector(universeState);
-  const [fullScreenImage, setFullScreenImage] = useState<string | undefined>();
   const { text, setText, submit } = useChatCompose(servicesCollection.message);
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
-
-  const listItems: (Message | string)[] = useMemo(() => {
-    const items: (Message | string)[] = [];
-    let lastDate = messages[0]?.timestamp.toDateString() ?? "";
-    messages.forEach((message) => {
-      const date = message.timestamp.toDateString();
-      if (date !== lastDate) {
-        items.push(lastDate);
-        lastDate = date;
-      }
-      items.push(message);
-    });
-    items.push(lastDate);
-    return items;
-  }, [messages]);
-
-  const chatTitle = useMemo(() => {
-    if (!chat) {
-      return "";
-    }
-    if (chat.isGroup) {
-      return chat.name;
-    }
-    return chat.members.find((member) => member.id !== profile?.id)?.name ?? "";
-  }, [chat, profile]);
-
-  const lastSeenTimestamp = useMemo(() => {
-    if (!chat || !messages.length) {
-      return new Date();
-    }
-    const lastMessage = messages[0];
-    return lastMessage?.timestamp;
-  }, [chat?.id]);
+  const {
+    fullScreenImage,
+    setFullScreenImage,
+    textAreaRef,
+    chatTitle,
+    lastSeenTimestamp,
+    listItems,
+  } = useChatComponent({ profile, chat, messages });
 
   if (!chat) {
     return <div>Selecciona un chat</div>;
@@ -106,27 +88,96 @@ export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
             i === 0 || typeof listItems[i - 1] === "string"
               ? null
               : (listItems[i - 1] as Message).senderId;
+          const isMine = message.senderId === profile?.id;
+          const isSameAsPrev = prevMessageSenderId === message.senderId;
           // We only show the image if this is chat group, the message is not mine
           // and the previous message was not from the same sender.
-          const shouldShowImage =
-            chat.isGroup &&
-            message.senderId !== profile?.id &&
-            !(prevMessageSenderId === message.senderId);
-          return (
+          const shouldShowImage = chat.isGroup && !isMine && !isSameAsPrev;
+          const component = (
             <OneMessage
-              key={message.id}
               onImageClick={(e) => {
                 e.stopPropagation();
+                e.preventDefault();
                 if (message.image) {
                   setFullScreenImage(message.image);
                 }
               }}
               message={message}
-              mine={message.senderId === profile?.id}
+              mine={isMine}
               profile={thisProfile}
               shouldShowImage={shouldShowImage}
               shouldAnimate={message.timestamp > lastSeenTimestamp}
             />
+          );
+
+          return isMine ? (
+            <ContextMenu
+              key={message.id}
+              options={[
+                {
+                  label: "Responder",
+                  onClick: () => {
+                    console.log("Responder");
+                  },
+                  icon: BiReply,
+                },
+                {
+                  label: "Reenviar",
+                  onClick: () => {
+                    console.log("Reenviar");
+                  },
+                  icon: BiReplyAll,
+                },
+                {
+                  label: "Copiar",
+                  onClick: () => {
+                    console.log("Copiar");
+                  },
+                  icon: BiCopy,
+                },
+                {
+                  label: "Editar",
+                  onClick: () => {
+                    console.log("Editar");
+                  },
+                  icon: BiEdit,
+                },
+                {
+                  label: "Traducir",
+                  onClick: () => {
+                    console.log("Traducir");
+                  },
+                  icon: BiWorld,
+                },
+                {
+                  label: "Anclar",
+                  onClick: () => {
+                    console.log("Anclar");
+                  },
+                  icon: BiPin,
+                },
+                {
+                  label: "Borrar",
+                  onClick: () => {
+                    console.log("Borrar");
+                  },
+                  icon: BiTrashAlt,
+                  iconColor: "var(--error)",
+                },
+                {
+                  label: "Borrar sin rastros",
+                  onClick: () => {
+                    console.log("Borrar sin rastros");
+                  },
+                  icon: BiSolidTrash,
+                  iconColor: "var(--error)",
+                },
+              ]}
+            >
+              {component}
+            </ContextMenu>
+          ) : (
+            component
           );
         })}
       </div>
@@ -164,59 +215,5 @@ export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
         </div>
       )}
     </>
-  );
-};
-
-export const OneMessage = ({
-  message,
-  mine,
-  profile,
-  shouldShowImage,
-  onImageClick,
-  shouldAnimate,
-}: {
-  message: Message;
-  mine: boolean;
-  profile: Profile;
-  shouldShowImage?: boolean;
-  onImageClick: (e: MouseEvent) => void;
-  shouldAnimate: boolean;
-}) => {
-  useChatComponent({ message, messageService: servicesCollection.message });
-  return (
-    <div
-      className={`messageContainer ${css.messageContainer} ${
-        shouldAnimate ? css.shouldAnimate : ""
-      } ${
-        mine ? `myMessage ` + css.myMessage : `otherMessage ` + css.otherMessage
-      }`}
-    >
-      <span
-        className={`messageProfileImage ${css.messageProfileImage}`}
-        data-profile-image={(shouldShowImage && profile.avatar) || ""}
-        style={
-          {
-            "--profile-image": `url(${profile.avatar})`,
-          } as CSSProperties
-        }
-      ></span>
-      <div className={`messageContent ${css.messageContent}`}>
-        {message.image && (
-          <img
-            src={message.image}
-            alt="message"
-            className={`messageImage ${css.messageImage}`}
-            onClick={onImageClick}
-          />
-        )}
-        <span>{message.text}</span>
-        <div className={`${css.messageFooter} messageFooter`}>
-          <span className="timestamp">
-            {message.timestamp.toLocaleTimeString().substring(0, 5)}
-          </span>
-          {mine && <SeenStatus message={message} />}
-        </div>
-      </div>
-    </div>
   );
 };

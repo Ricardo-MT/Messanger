@@ -157,7 +157,7 @@
   justify-content: center;
   z-index: 100;
   animation: fadeBackground .3s ease;
-  background-color: rgba(0, 0, 0, .8);
+  background-color: var(--background-traslucent);
 }
 
 .fullScreenImage img {
@@ -172,7 +172,7 @@
     background-color: rgba(0, 0, 0, 0);
   }
   100% {
-    background-color: rgba(0, 0, 0, .8);
+    background-color: var(--background-traslucent);
   }
 }
 
@@ -210,6 +210,10 @@
   flex-direction: row;
   gap: .5rem;
   max-width: 80%;
+  -webkit-user-select: none; /* Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
 }
 
 .messageContainer.myMessage {
@@ -242,8 +246,8 @@
   gap: .2rem;
 }
 
-.chatBody .messageContainer.otherMessage .messageProfileImage {
-  display: inline-block;
+.messageContainer.otherMessage .messageProfileImage {
+  display: none;
   width: 1.8rem;
   height: 1.8rem;
   border-radius: 50%;
@@ -253,7 +257,8 @@
   align-self: flex-end;
 }
 
-.chatBody .messageContainer.otherMessage .messageProfileImage:not([data-profile-image=""]) {
+.messageContainer.otherMessage .messageProfileImage:not([data-profile-image=""]) {
+  display: inline-block;
   background-color: #f8f9fa;
   background-image: var(--profile-image);
 }
