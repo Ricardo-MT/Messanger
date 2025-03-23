@@ -257,6 +257,15 @@
   align-self: flex-end;
 }
 
+.messageContainer .deletedMessage {
+  font-style: italic;
+  align-items: center;
+  gap: .2rem;
+  display: flex;
+  flex-direction: row;
+  filter: brightness(0.8);
+}
+
 .messageContainer.otherMessage .messageProfileImage:not([data-profile-image=""]) {
   display: inline-block;
   background-color: #f8f9fa;

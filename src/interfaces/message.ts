@@ -11,6 +11,7 @@ export interface Message {
   image?: string;
   timestamp: Date;
   senderId: string;
+  deleted?: boolean;
 }
 
 export const messageFromDoc = (id: string, data: DocumentData): Message => {

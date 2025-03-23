@@ -1,17 +1,25 @@
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Profile } from "../../../../interfaces/profile";
 import { Chat } from "../../../../interfaces/chat";
 import { Message } from "../../../../interfaces/message";
+import { MessageService } from "../../../../services/message";
 
 type Props = {
   profile: Profile | null;
   chat: Chat | null | undefined;
   messages: Message[];
+  messageService: MessageService;
 };
 
-export const useChatComponent = ({ profile, chat, messages }: Props) => {
+export const useChatComponent = ({
+  profile,
+  chat,
+  messages,
+  messageService,
+}: Props) => {
   const [fullScreenImage, setFullScreenImage] = useState<string | undefined>();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
   const chatTitle = useMemo(() => {
     if (!chat) {
       return "";
@@ -21,6 +29,7 @@ export const useChatComponent = ({ profile, chat, messages }: Props) => {
     }
     return chat.members.find((member) => member.id !== profile?.id)?.name ?? "";
   }, [chat, profile]);
+
   const lastSeenTimestamp = useMemo(() => {
     if (!chat || !messages.length) {
       return new Date();
@@ -28,6 +37,7 @@ export const useChatComponent = ({ profile, chat, messages }: Props) => {
     const lastMessage = messages[0];
     return lastMessage?.timestamp;
   }, [chat?.id]);
+
   const listItems: (Message | string)[] = useMemo(() => {
     const items: (Message | string)[] = [];
     let lastDate = messages[0]?.timestamp.toDateString() ?? "";
@@ -42,6 +52,11 @@ export const useChatComponent = ({ profile, chat, messages }: Props) => {
     items.push(lastDate);
     return items;
   }, [messages]);
+
+  const handleOnDeleteMessage = useCallback(async (message: Message) => {
+    await messageService.deleteMessage(message.id);
+  }, []);
+
   const value = useMemo(
     () => ({
       fullScreenImage,
@@ -50,8 +65,15 @@ export const useChatComponent = ({ profile, chat, messages }: Props) => {
       chatTitle,
       lastSeenTimestamp,
       listItems,
+      handleOnDeleteMessage,
     }),
-    [chatTitle, fullScreenImage, lastSeenTimestamp, listItems]
+    [
+      chatTitle,
+      fullScreenImage,
+      lastSeenTimestamp,
+      listItems,
+      handleOnDeleteMessage,
+    ]
   );
   return value;
 };

@@ -44,6 +44,7 @@ export interface MessageService {
     memberId: string
   ) => Promise<void>;
   seenMessageByMember: (messageId: string, memberId: string) => Promise<void>;
+  deleteMessage: (messageId: string) => Promise<void>;
 }
 
 const addImageToMessage = async ({
@@ -188,6 +189,12 @@ export const messageService = (): MessageService => ({
     await updateDoc(messageRef, {
       [`seenBy.${memberId}`]: true,
       seenByAll,
+    });
+  },
+  deleteMessage: async (messageId: string) => {
+    const messageRef = doc(firestoreDb, collections.MESSAGE, messageId);
+    await updateDoc(messageRef, {
+      deleted: true,
     });
   },
 });

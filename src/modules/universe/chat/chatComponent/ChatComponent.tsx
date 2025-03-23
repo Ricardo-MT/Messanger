@@ -38,7 +38,13 @@ export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
     chatTitle,
     lastSeenTimestamp,
     listItems,
-  } = useChatComponent({ profile, chat, messages });
+    handleOnDeleteMessage,
+  } = useChatComponent({
+    profile,
+    chat,
+    messages,
+    messageService: servicesCollection.message,
+  });
 
   if (!chat) {
     return <div>Selecciona un chat</div>;
@@ -95,6 +101,7 @@ export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
           const shouldShowImage = chat.isGroup && !isMine && !isSameAsPrev;
           const component = (
             <OneMessage
+              key={"oneMessage" + message.id}
               onImageClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
@@ -159,7 +166,7 @@ export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
                 {
                   label: "Borrar",
                   onClick: () => {
-                    console.log("Borrar");
+                    handleOnDeleteMessage(message);
                   },
                   icon: BiTrashAlt,
                   iconColor: "var(--error)",

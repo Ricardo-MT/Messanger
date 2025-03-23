@@ -40,7 +40,7 @@ export const useChat = (messageService: MessageService) => {
         const q = query(
           db.message,
           where("chatId", "==", chatRef),
-          where("timestamp", ">", latestTimestamp),
+          // where("timestamp", ">", latestTimestamp),
           orderBy("timestamp", "desc")
         );
         return onSnapshot(q, (snapshot) => {
@@ -49,7 +49,10 @@ export const useChat = (messageService: MessageService) => {
           const modify: Message[] = [];
           for (const change of snapshot.docChanges()) {
             if (change.type === "added") {
-              add.push(messageFromDoc(change.doc.id, change.doc.data()));
+              const message = messageFromDoc(change.doc.id, change.doc.data());
+              if (message.timestamp > latestTimestamp) {
+                add.push(messageFromDoc(change.doc.id, change.doc.data()));
+              }
             }
             if (change.type === "removed") {
               remove.push(change.doc.id);
