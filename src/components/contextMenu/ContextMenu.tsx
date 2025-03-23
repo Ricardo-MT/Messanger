@@ -31,7 +31,7 @@ export const ContextMenu = ({ children, options }: Props) => {
 
     const newStyles: CSSProperties = {};
     if (top < window.innerHeight / 2) {
-      newStyles.top = `${top + height + extraSpace}px`;
+      newStyles.top = `${top + height / 2 + extraSpace}px`;
     } else {
       newStyles.bottom = `${window.innerHeight - top + extraSpace}px`;
     }

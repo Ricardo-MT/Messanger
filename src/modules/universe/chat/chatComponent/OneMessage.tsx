@@ -24,6 +24,7 @@ export const OneMessage = ({
   return (
     <div
       {...rest}
+      data-message-id={message.id}
       className={`messageContainer ${css.messageContainer} ${
         shouldAnimate ? css.shouldAnimate : ""
       } ${

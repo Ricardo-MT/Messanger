@@ -39,6 +39,7 @@ export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
     lastSeenTimestamp,
     listItems,
     handleOnDeleteMessage,
+    handleOnDeleteMessagePermanently,
   } = useChatComponent({
     profile,
     chat,
@@ -71,6 +72,9 @@ export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
         {chatTitle}
       </div>
       <div
+        data-chat-id={chat.id}
+        data-chat-name={chat.name}
+        data-chat-is-group={chat.isGroup}
         className={`${css.chatBody} ${
           chat.isGroup ? css.chatBody : ""
         } chatBody`}
@@ -117,70 +121,85 @@ export const ChatComponent = ({ chat, messages, onGoBack }: Props) => {
             />
           );
 
-          return isMine ? (
-            <ContextMenu
-              key={message.id}
-              options={[
-                {
-                  label: "Responder",
-                  onClick: () => {
-                    console.log("Responder");
-                  },
-                  icon: BiReply,
-                },
-                {
-                  label: "Reenviar",
-                  onClick: () => {
-                    console.log("Reenviar");
-                  },
-                  icon: BiReplyAll,
-                },
-                {
-                  label: "Copiar",
-                  onClick: () => {
-                    console.log("Copiar");
-                  },
-                  icon: BiCopy,
-                },
-                {
-                  label: "Editar",
-                  onClick: () => {
-                    console.log("Editar");
-                  },
-                  icon: BiEdit,
-                },
-                {
-                  label: "Traducir",
-                  onClick: () => {
-                    console.log("Traducir");
-                  },
-                  icon: BiWorld,
-                },
-                {
-                  label: "Anclar",
-                  onClick: () => {
-                    console.log("Anclar");
-                  },
-                  icon: BiPin,
-                },
-                {
-                  label: "Borrar",
-                  onClick: () => {
-                    handleOnDeleteMessage(message);
-                  },
-                  icon: BiTrashAlt,
-                  iconColor: "var(--error)",
-                },
-                {
+          const options = [];
+          if (isMine) {
+            if (message.deleted) {
+              if (!message.deliveredToAll) {
+                options.push({
                   label: "Borrar sin rastros",
                   onClick: () => {
-                    console.log("Borrar sin rastros");
+                    handleOnDeleteMessagePermanently(message);
                   },
                   icon: BiSolidTrash,
                   iconColor: "var(--error)",
+                });
+              }
+            } else {
+              options.push({
+                label: "Responder",
+                onClick: () => {
+                  console.log("Responder");
                 },
-              ]}
-            >
+                icon: BiReply,
+              });
+              options.push({
+                label: "Reenviar",
+                onClick: () => {
+                  console.log("Reenviar");
+                },
+                icon: BiReplyAll,
+              });
+              options.push({
+                label: "Copiar",
+                onClick: () => {
+                  console.log("Copiar");
+                },
+                icon: BiCopy,
+              });
+              options.push({
+                label: "Editar",
+                onClick: () => {
+                  console.log("Editar");
+                },
+                icon: BiEdit,
+              });
+              options.push({
+                label: "Traducir",
+                onClick: () => {
+                  console.log("Traducir");
+                },
+                icon: BiWorld,
+              });
+              options.push({
+                label: "Anclar",
+                onClick: () => {
+                  console.log("Anclar");
+                },
+                icon: BiPin,
+              });
+              options.push({
+                label: "Borrar",
+                onClick: () => {
+                  handleOnDeleteMessage(message);
+                },
+                icon: BiTrashAlt,
+                iconColor: "var(--error)",
+              });
+              if (!message.deliveredToAll) {
+                options.push({
+                  label: "Borrar sin rastros",
+                  onClick: () => {
+                    handleOnDeleteMessagePermanently(message);
+                  },
+                  icon: BiSolidTrash,
+                  iconColor: "var(--error)",
+                });
+              }
+            }
+          }
+
+          return isMine ? (
+            <ContextMenu key={message.id} options={options}>
               {component}
             </ContextMenu>
           ) : (

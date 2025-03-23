@@ -18,22 +18,23 @@ export const chatFromDoc = async (
   data: DocumentData
 ): Promise<Chat> => {
   // Populate members with real data
-  const members = await Promise.all(
-    data.members.map(async (member: DocumentReference) => {
+  const [universe, ...members] = await Promise.all([
+    getDoc(data.universeId),
+    ...data.members.map(async (member: DocumentReference) => {
       const profileDoc = await getDoc(member);
       const profile = profileFromDoc(
         profileDoc.id,
         profileDoc.data() as DocumentData
       );
       return profile;
-    })
-  );
-
+    }),
+  ]);
   return {
     ...data,
     createdAt: data.createdAt.toDate(),
     updatedAt: data.updatedAt.toDate(),
     members,
+    universeId: universe.id,
     id,
   } as Chat;
 };

@@ -57,6 +57,20 @@ export const useChatComponent = ({
     await messageService.deleteMessage(message.id);
   }, []);
 
+  const handleOnDeleteMessagePermanently = useCallback(
+    async (message: Message) => {
+      if (!chat) {
+        return;
+      }
+      await messageService.deleteMessagePermanently(
+        message.id,
+        chat.id,
+        chat.universeId
+      );
+    },
+    [chat]
+  );
+
   const value = useMemo(
     () => ({
       fullScreenImage,
@@ -66,6 +80,7 @@ export const useChatComponent = ({
       lastSeenTimestamp,
       listItems,
       handleOnDeleteMessage,
+      handleOnDeleteMessagePermanently,
     }),
     [
       chatTitle,
@@ -73,6 +88,7 @@ export const useChatComponent = ({
       lastSeenTimestamp,
       listItems,
       handleOnDeleteMessage,
+      handleOnDeleteMessagePermanently,
     ]
   );
   return value;

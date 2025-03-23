@@ -23,6 +23,7 @@
   gap: var(--space-between-options);
   border-radius: 8px;
   background-color: var(--background-accent);
+  z-index: 100;
 }
 
 .contextMenuOption {

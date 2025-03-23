@@ -14,10 +14,17 @@ import { firestoreDb, storageApp } from "../settings/firebaseApp";
 import { collections, db } from "../settings/collections";
 import {
   getMessageImageStoragePath,
+  getMessageStoragePath,
   Message,
   messageFromDoc,
 } from "../interfaces/message";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+  deleteObject,
+  listAll,
+} from "firebase/storage";
 
 export interface MessageService {
   removeMessagesByChat: (chatId: string) => Promise<void>;
@@ -45,6 +52,11 @@ export interface MessageService {
   ) => Promise<void>;
   seenMessageByMember: (messageId: string, memberId: string) => Promise<void>;
   deleteMessage: (messageId: string) => Promise<void>;
+  deleteMessagePermanently: (
+    messageId: string,
+    chatId: string,
+    universeId: string
+  ) => Promise<void>;
 }
 
 const addImageToMessage = async ({
@@ -82,7 +94,21 @@ export const messageService = (): MessageService => ({
     const chatRef = doc(firestoreDb, collections.CHAT, chatId);
     const q = query(db.message, where("chatId", "==", chatRef));
     const messages = await getDocs(q);
-    await Promise.all(messages.docs.map((doc) => deleteDoc(doc.ref)));
+    const imagesToDelete = messages.docs
+      .map((doc) => doc.data())
+      .filter((message) => message.image);
+    await Promise.all([
+      ...messages.docs.map((doc) => deleteDoc(doc.ref)),
+      ...imagesToDelete.map((message) => {
+        const path = getMessageImageStoragePath(
+          message.universeId,
+          chatId,
+          message.id
+        );
+        const messageImageRef = ref(storageApp, path);
+        return deleteObject(messageImageRef);
+      }),
+    ]);
   },
   createMessage: async (message: {
     universeId: string;
@@ -196,5 +222,23 @@ export const messageService = (): MessageService => ({
     await updateDoc(messageRef, {
       deleted: true,
     });
+  },
+  deleteMessagePermanently: async (
+    messageId: string,
+    chatId: string,
+    universeId: string
+  ) => {
+    const messageRef = doc(firestoreDb, collections.MESSAGE, messageId);
+    const pathToMessageStorage = getMessageStoragePath(
+      universeId,
+      chatId,
+      messageRef.id
+    );
+    const messageStorageRef = ref(storageApp, pathToMessageStorage);
+    const allItems = await listAll(messageStorageRef);
+    await Promise.all([
+      deleteDoc(messageRef),
+      ...allItems.items.map((item) => deleteObject(item)),
+    ]);
   },
 });
