@@ -18,7 +18,7 @@
   --on-background-accent: #f1f1f1;
   --background-accent-secondary: #3d4b54;
   --background-traslucent: rgba(0, 0, 0, .5);
-  --primary: #0a7b66;
+  --primary: #0aab66;
   --nav-item-active: var(--primary);
   --nav-item-inactive: #546169;
   --divider: #3d4b54;
@@ -205,6 +205,7 @@ button:focus-visible {
 
 .messageContainer.myMessage .messageContent {
   background-color: var(--message-mine);
+  color: white;
 }
 
 .messageContainer.otherMessage .messageContent {

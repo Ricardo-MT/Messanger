@@ -31,17 +31,15 @@ export const OneMessage = ({
         mine ? `myMessage ` + css.myMessage : `otherMessage ` + css.otherMessage
       }`}
     >
-      {!message.deleted && (
-        <span
-          className={`messageProfileImage ${css.messageProfileImage}`}
-          data-profile-image={(shouldShowImage && profile.avatar) || ""}
-          style={
-            {
-              "--profile-image": `url(${profile.avatar})`,
-            } as CSSProperties
-          }
-        ></span>
-      )}
+      <span
+        className={`messageProfileImage ${css.messageProfileImage}`}
+        data-profile-image={(shouldShowImage && profile.avatar) || ""}
+        style={
+          {
+            "--profile-image": `url(${profile.avatar})`,
+          } as CSSProperties
+        }
+      ></span>
       <div className={`messageContent ${css.messageContent}`}>
         {!message.deleted ? (
           <>
