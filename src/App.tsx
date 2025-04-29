@@ -19,8 +19,45 @@ import { ManageChatsPage } from "./modules/manage/manageChats/page.tsx";
 import { useAppSelector } from "./store/storeHooks.ts";
 import { authState } from "./contexts/authSlice.ts";
 import { LoadingComponent } from "./components/loadingComponent/LoadingComponent.tsx";
+import { useEffect, useState } from "react";
+import { getToken, onMessage } from "firebase/messaging";
+import { messaging } from "./settings/firebaseApp.ts";
+import { enviorment } from "./settings/enviorment.ts";
 
 function App() {
+  const [token, setToken] = useState<string | null>(null);
+  useEffect(() => {
+    const requestNotificationPermission = async () => {
+      try {
+        const currentToken = await getToken(messaging, {
+          vapidKey: enviorment.VITE_FIREBASE_VAPID_KEY, // Replace with your VAPID key
+        });
+        if (currentToken) {
+          setToken(currentToken);
+          console.log("FCM registration token:", currentToken);
+          // Send the token to your backend to save it.
+        } else {
+          console.log(
+            "No registration token available. Request permission to generate one."
+          );
+        }
+      } catch (error) {
+        console.error("An error occurred while retrieving token. ", error);
+      }
+    };
+
+    requestNotificationPermission();
+
+    onMessage(messaging, (payload) => {
+      console.log("Message received. ", payload);
+      // Handle foreground messages
+      // Display a notification or update UI
+      alert("New message received!");
+    });
+  }, []);
+  useEffect(() => {
+    console.log("Token:", token);
+  }, [token]);
   return (
     <>
       <Provider store={store}>

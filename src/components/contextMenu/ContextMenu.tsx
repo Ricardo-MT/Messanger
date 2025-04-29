@@ -69,7 +69,7 @@ export const BackgroundPanel = ({
       animate={{ backgroundColor: "var(--background-traslucent)" }}
       exit={{ opacity: 0 }}
       ref={backgroundRef}
-      className={`${css.backgroundPanel} backgroundPanel`}
+      className={`${css.backgroundPanel} backgroundPanel unselectable-text`}
       onClick={(e) => {
         e.stopPropagation();
         e.preventDefault();

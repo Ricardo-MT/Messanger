@@ -8,4 +8,5 @@ export const firebaseConfig = {
   messagingSenderId: enviorment.VITE_FIREBASE_MESSANGING_SENDER_ID,
   appId: enviorment.VITE_FIREBASE_APP_ID,
   measurementId: enviorment.VITE_FIREBASE_MEASUREMENT_ID,
+  vapidKey: enviorment.VITE_FIREBASE_VAPID_KEY,
 };

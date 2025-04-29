@@ -17,7 +17,7 @@
   --background-accent: #202c33;
   --on-background-accent: #f1f1f1;
   --background-accent-secondary: #3d4b54;
-  --background-traslucent: rgba(0, 0, 0, .5);
+  --background-traslucent: rgba(0, 0, 0, 0.5);
   --primary: #0aab66;
   --nav-item-active: var(--primary);
   --nav-item-inactive: #546169;
@@ -67,7 +67,6 @@
   }
 }
 
-
 * {
   /* box-sizing: border-box; */
 }
@@ -83,11 +82,14 @@ html {
   display: inline-flex;
 }
 
-html, body {
+html,
+body {
   background-color: var(--background);
 }
 
-html:has(body.ios), body.ios, body.ios #root {
+html:has(body.ios),
+body.ios,
+body.ios #root {
   transition: height 0.2s;
 }
 
@@ -97,7 +99,8 @@ a {
   text-decoration: inherit;
   transition: color 0.25s;
 }
-a:hover, a.active {
+a:hover,
+a.active {
   color: var(--primary);
 }
 
@@ -126,7 +129,7 @@ body {
   flex-direction: column;
 }
 
-#root[data-is-fullscreen='0'] {
+#root[data-is-fullscreen="0"] {
   padding-bottom: 0;
 }
 
@@ -159,7 +162,7 @@ button:focus-visible {
 }
 
 .appBrandName::after {
-  content: 'WeChat';
+  content: "WeChat";
   color: var(--primary);
 }
 
@@ -214,7 +217,7 @@ button:focus-visible {
 
 .chatListItem .timestamp {
   color: var(--timestamp-on-chat-list-item);
-  font-size: .8rem;
+  font-size: 0.8rem;
   align-self: flex-end;
 }
 
@@ -239,7 +242,6 @@ button:focus-visible {
   background-color: var(--timestamp-on-message-mine);
   mask-image: url(/icons/sent.svg);
   -webkit-mask-image: url(/icons/sent.svg);
-
 }
 
 [data-message-seen-status="delivered"] {
@@ -252,4 +254,11 @@ button:focus-visible {
   background-color: var(--message-seen-status-seen);
   mask-image: url(/icons/seen.svg);
   -webkit-mask-image: url(/icons/delivered.svg);
+}
+
+.unselectable-text {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
 }

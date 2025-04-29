@@ -25,7 +25,7 @@ export const OneMessage = ({
     <div
       {...rest}
       data-message-id={message.id}
-      className={`messageContainer ${css.messageContainer} ${
+      className={`unselectable-text messageContainer ${css.messageContainer} ${
         shouldAnimate ? css.shouldAnimate : ""
       } ${
         mine ? `myMessage ` + css.myMessage : `otherMessage ` + css.otherMessage
