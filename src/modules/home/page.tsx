@@ -27,7 +27,7 @@ export const HomePage = () => {
       >
         CERRAR SESIÓN
       </button>
-      <h1>WeChat</h1>
+      <h1>WazzChat</h1>
       {!!universes.length && (
         <Link to={ROUTE_NAMES.MANAGE}>Administra tus universos</Link>
       )}

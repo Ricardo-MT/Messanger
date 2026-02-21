@@ -14,7 +14,7 @@ const LoginView = () => {
 
   return (
     <>
-      <h2>Bienvenido a WeChat</h2>
+      <h2>Bienvenido a WazzChat</h2>
       <form
         onSubmit={(event) =>
           onSubmit({ event, email: state.email, password: state.password })

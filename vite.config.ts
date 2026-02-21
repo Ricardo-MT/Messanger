@@ -17,8 +17,8 @@ export default defineConfig({
       },
 
       manifest: {
-        name: "WeChat",
-        short_name: "WeChat",
+        name: "WazzChat",
+        short_name: "WazzChat",
         description: "A chat app",
         theme_color: "#f3f1e4",
         background_color: "#f3f1e4",

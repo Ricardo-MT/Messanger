@@ -162,7 +162,7 @@ button:focus-visible {
 }
 
 .appBrandName::after {
-  content: "WeChat";
+  content: "WazzChat";
   color: var(--primary);
 }
 
